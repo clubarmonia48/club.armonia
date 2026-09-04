@@ -1,0 +1,1606 @@
+<!DOCTYPE html> 
+<html lang="tr"> 
+<head> 
+<meta charset="UTF-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>Club Armonia Bodrum Evleri - Marangoz Arıza Bildirimi</title> 
+
+<!-- Firebase CDN --> 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js">
+function applyAllLanguageUI(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key=el.getAttribute("data-i18n");
+    const val=uiText(key);
+    if(val) el.textContent=val;
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+    el.placeholder=uiText(el.getAttribute("data-i18n-placeholder"));
+  });
+  if(typeof sonKayitlariYukle==="function") sonKayitlariYukle();
+}
+
+</script> 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script> 
+
+<!-- EmailJS CDN Kütüphanesi -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      // EmailJS hesabından alacağın PUBLIC KEY buraya yazılacak
+      emailjs.init("YOUR_PUBLIC_KEY"); 
+   })();
+</script>
+
+<style> 
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; padding: 15px; margin: 0; } 
+.form-container { max-width: 450px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; } 
+.lang-switch-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+} 
+.lang-select {
+  width: 100%;
+  max-width: 300px;
+  background: #ffffff;
+  border: 2px solid #0088cc;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  color: #0f172a;
+  outline: none;
+  box-shadow: 0 3px 10px rgba(0,136,204,.15);
+}
+.lang-select:focus {
+  border-color: #006fa8;
+  box-shadow: 0 0 0 3px rgba(0,136,204,.15);
+} 
+.logo { display: block; max-width: 200px; margin: 0 auto 15px auto; } 
+h2 { text-align: center; color: #000000; font-size: 20px; font-weight: 800; margin-bottom: 25px; } 
+.form-group { margin-bottom: 18px; } 
+label { font-weight: 700; font-size: 14px; color: #000000; display: block; margin-bottom: 6px; } 
+label span { color: #dc2626; } 
+input[type="text"], select, textarea { width: 100%; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; background: #fff; } 
+select { background-color: #f8fafc; } 
+textarea { resize: vertical; } 
+.location-preview { font-size: 12px; color: #0284c7; font-weight: bold; margin-top: 5px; display: block; min-height: 16px; } 
+.file-input-wrapper { display: flex; align-items: center; gap: 10px; } 
+.hidden-file-input { display: none; } 
+.btn-custom-file { background-color: #475569; color: white; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 700; white-space: nowrap; transition: background 0.2s; } 
+.btn-custom-file:hover { background-color: #334155; } 
+.file-name-display { font-size: 13px; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } 
+#customTimeGroup { display: none; margin-top: 10px; } 
+.btn-submit { width: 100%; background: #0088cc; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; } 
+.btn-submit:hover { background: #0077b5; } 
+.btn-submit:disabled { background: #94a3b8; cursor: not-allowed; } 
+hr { border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0 20px 0; } 
+.records-title { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; } 
+.records-table { width: 100%; border-collapse: collapse; background: #f8fafc; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; } 
+.records-table th { background: #e2e8f0; color: #000; text-align: left; padding: 10px 12px; font-size: 13px; font-weight: 700; } 
+.records-table td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; color: #1e293b; } 
+.status-badge { background: #fef08a; color: #854d0e; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; display: inline-block; }
+.status-yeni { background:#dbeafe; color:#1d4ed8; }
+.status-bekliyor { background:#fef3c7; color:#92400e; }
+.status-islemde { background:#ede9fe; color:#6d28d9; }
+.status-parc-bekliyor { background:#fce7f3; color:#9d174d; }
+.status-tamamlandi { background:#dcfce7; color:#166534; }
+.status-iptal { background:#e5e7eb; color:#374151; }
+.record-meta { font-size:11px; color:#64748b; margin-top:3px; }
+.history-title { margin-top:22px; }
+.history-card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:13px; margin-bottom:10px; box-shadow:0 2px 8px rgba(15,23,42,.05); }
+.history-card.urgent { border-left:4px solid #dc2626; }
+.history-top { display:flex; justify-content:space-between; gap:8px; align-items:center; flex-wrap:wrap; }
+.history-type { font-weight:800; color:#0f172a; font-size:13px; }
+.history-desc { margin-top:7px; font-size:13px; color:#334155; line-height:1.45; }
+ 
+
+.btn-repeat{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:42px;
+  padding:9px 14px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  background:#fff;
+  color:#fff !important;
+  font-weight:900;
+  cursor:pointer;
+  font-size:14px;
+  background:#0088cc !important;
+}
+.btn-repeat:active{transform:scale(.98)}
+.records-table .record-action-cell{padding-top:10px;}
+.records-table .record-action-cell .btn-repeat{width:100%; min-height:42px;}
+.btn-repeat:hover{background:#007bb8 !important; color:#fff !important}
+</style> 
+
+<style id="mobile-card-responsive">
+/* Mobile adaptation: preserves the original desktop presentation. */
+@media (max-width: 700px) {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .container, .main-container, .content, .form-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Keep the existing form/design intact, only make controls fit the screen. */
+  input, select, textarea, button {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Last repair records become compact mobile cards. */
+  .records-table {
+    width: 100% !important;
+    border: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: transparent !important;
+  }
+
+  .records-table thead {
+    display: none !important;
+  }
+
+  .records-table tbody,
+  .records-table tr,
+  .records-table td {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .records-table tbody tr {
+    margin: 0 0 12px 0 !important;
+    padding: 13px 14px !important;
+    border: 1px solid rgba(15, 23, 42, .10) !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .07) !important;
+  }
+
+  .records-table tbody td {
+    padding: 4px 0 !important;
+    border: 0 !important;
+    text-align: left !important;
+    min-height: 24px;
+    word-break: break-word;
+  }
+
+  .records-table tbody td:nth-child(1)::before {
+    content: "Oda";
+  }
+  .records-table tbody td:nth-child(2)::before {
+    content: "Tür";
+  }
+  .records-table tbody td:nth-child(3)::before {
+    content: "Durum";
+  }
+  .records-table tbody td:nth-child(4)::before {
+    content: "İşlem";
+  }
+  .records-table tbody td:nth-child(4) {
+    padding-top: 10px !important;
+    margin-top: 6px;
+    border-top: 1px solid #e2e8f0 !important;
+  }
+
+  .records-table tbody td::before {
+    display: inline-block;
+    min-width: 58px;
+    margin-right: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    color: #64748b;
+    vertical-align: top;
+  }
+
+  .records-table tbody td[colspan] {
+    text-align: center !important;
+    padding: 14px !important;
+  }
+  .records-table tbody td[colspan]::before {
+    display: none !important;
+  }
+
+  .records-title {
+    margin-top: 16px !important;
+    margin-bottom: 10px !important;
+  }
+}
+</style>
+
+<style id="room-login-style">
+#roomLoginOverlay{position:fixed;inset:0;background:#f4f6f9;display:flex;align-items:center;justify-content:center;padding:18px;z-index:9999;box-sizing:border-box;}
+.room-login-card{width:100%;max-width:420px;background:#fff;border-radius:18px;padding:28px 22px;box-shadow:0 8px 30px rgba(15,23,42,.12);text-align:center;}
+.room-login-logo{display:block;width:220px;max-width:75%;height:auto;margin:0 auto 12px auto;}
+.room-login-card h2{margin:8px 0;font-size:22px;}
+.room-login-card p{color:#64748b;font-size:13px;font-weight:600;line-height:1.5;margin:0 0 20px;}
+.room-login-card input{width:100%;padding:14px;border:1.5px solid #cbd5e1;border-radius:10px;box-sizing:border-box;font-size:18px;text-align:center;letter-spacing:2px;outline:none;}
+.room-login-card button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:10px;background:#0088cc;color:#fff;font-size:16px;font-weight:800;cursor:pointer;}
+.room-login-error{min-height:20px;margin-top:10px;color:#dc2626;font-size:12px;font-weight:800;}
+.room-login-language{margin:14px 0 16px;}
+.room-login-language-label{font-size:13px;font-weight:900;color:#334155;margin-bottom:7px;}
+.room-login-language .lang-switch-container{margin:0;display:block;}
+.room-login-language .lang-select{width:100%;max-width:none;padding:11px 14px;font-size:15px;border-radius:11px;}
+#guestApp{display:none;}
+</style>
+
+
+<style>
+
+/* Son Arıza Kayıtları - durum bazlı kart renkleri */
+.records-table tbody tr.status-bekliyor > td,
+.records-table tbody tr.status-waiting > td,
+.records-table tbody tr.status-pending > td {
+  background: #ffe0e0 !important;
+  border-left: 6px solid #d32f2f !important;
+}
+.records-table tbody tr.status-tamirde > td,
+.records-table tbody tr.status-repair > td,
+.records-table tbody tr.status-in-workshop > td,
+.records-table tbody tr.status-atolyede > td {
+  background: #fff1bf !important;
+  border-left: 6px solid #f2b400 !important;
+}
+.records-table tbody tr.status-tamamlandi > td,
+.records-table tbody tr.status-completed > td,
+.records-table tbody tr.status-done > td {
+  background: #dff5e5 !important;
+  border-left: 6px solid #2e9d50 !important;
+}
+
+/* Mobil kart görünümünde de kutunun tamamını renklendir */
+@media (max-width: 700px) {
+  .records-table tbody tr.status-bekliyor,
+  .records-table tbody tr.status-waiting,
+  .records-table tbody tr.status-pending {
+    background: #ffe0e0 !important;
+    border-left: 6px solid #d32f2f !important;
+  }
+  .records-table tbody tr.status-tamirde,
+  .records-table tbody tr.status-repair,
+  .records-table tbody tr.status-in-workshop,
+  .records-table tbody tr.status-atolyede {
+    background: #fff1bf !important;
+    border-left: 6px solid #f2b400 !important;
+  }
+  .records-table tbody tr.status-tamamlandi,
+  .records-table tbody tr.status-completed,
+  .records-table tbody tr.status-done {
+    background: #dff5e5 !important;
+    border-left: 6px solid #2e9d50 !important;
+  }
+}
+
+</style>
+<style>
+
+.status-bekliyor .status-badge,
+.status-waiting .status-badge,
+.status-pending .status-badge {
+  background:#d32f2f !important; color:#fff !important;
+}
+.status-tamirde .status-badge,
+.status-repair .status-badge,
+.status-in-workshop .status-badge,
+.status-atolyede .status-badge {
+  background:#f2b400 !important; color:#222 !important;
+}
+.status-tamamlandi .status-badge,
+.status-completed .status-badge,
+.status-done .status-badge {
+  background:#2e9d50 !important; color:#fff !important;
+}
+
+</style>
+<style>
+
+/* MOBİL SON ARIZA KAYITLARI: KARTIN TAMAMI DURUMA GÖRE RENKLENİR */
+@media (max-width: 700px) {
+  .records-table tbody tr.status-bekliyor {
+    background: #ffdede !important;
+    border: 2px solid #d32f2f !important;
+    border-left: 0 !important;
+  }
+  .records-table tbody tr.status-tamamlandi {
+    background: #dcf7e5 !important;
+    border: 2px solid #2e9d50 !important;
+    border-left: 0 !important;
+  }
+  .records-table tbody tr.status-tamirde,
+  .records-table tbody tr.status-islemde {
+    background: #fff0bf !important;
+    border: 2px solid #e0a800 !important;
+    border-left: 0 !important;
+  }
+
+  .records-table tbody tr.status-bekliyor > td,
+  .records-table tbody tr.status-tamamlandi > td,
+  .records-table tbody tr.status-tamirde > td,
+  .records-table tbody tr.status-islemde > td {
+    background: transparent !important;
+  }
+}
+
+</style>
+<style>
+/* kartın içindeki dikey sol çizgiyi kaldır */
+
+@media (max-width: 700px) {
+  .records-table tbody tr.status-bekliyor > td,
+  .records-table tbody tr.status-tamamlandi > td,
+  .records-table tbody tr.status-tamirde > td,
+  .records-table tbody tr.status-islemde > td {
+    border-left: 0 !important;
+  }
+}
+
+</style>
+</head> 
+<body>
+<div id="roomLoginOverlay">
+  <div class="room-login-card">
+    <img src="logo.jpg" alt="Club Armonia Bodrum Evleri Logo" style="display:block;width:180px;max-width:75%;height:auto;margin:0 auto 12px auto;">
+    <h2 id="loginTitle">Marangoz Arıza Bildirimi</h2>
+    <p id="loginInfo">Odanızdan arıza bildirmek için <b>oda numaranızı şifre olarak</b> girin.</p>
+
+    <div class="room-login-fields">
+      <div>
+        <label class="room-login-label" for="loginLang">🌐 Dil / Language</label>
+        <select id="loginLang" onchange="loginLanguageChanged(this.value)">
+          <option value="TR">🇹🇷 Türkçe</option>
+          <option value="EN">🇬🇧 English</option>
+          <option value="DE">🇩🇪 Deutsch</option>
+          <option value="RU">🇷🇺 Русский</option>
+          <option value="NL">🇳🇱 Nederlands</option>
+          <option value="FR">🇫🇷 Français</option>
+          <option value="HI">🇮🇳 हिन्दी</option>
+          <option value="AR">🇸🇦 العربية</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="room-login-label" for="countryCode">📞 Ülke Alan Kodu + Telefon Numarası</label>
+        <div class="phone-row">
+          <select id="countryCode" aria-label="Ülke alan kodu">
+            <option value="+90">🇹🇷 +90 Türkiye</option>
+            <option value="+44">🇬🇧 +44 İngiltere</option>
+            <option value="+49">🇩🇪 +49 Almanya</option>
+            <option value="+7">🇷🇺 +7 Rusya</option>
+            <option value="+31">🇳🇱 +31 Hollanda</option>
+            <option value="+33">🇫🇷 +33 Fransa</option>
+            <option value="+91">🇮🇳 +91 Hindistan</option>
+            <option value="+966">🇸🇦 +966 Suudi Arabistan</option>
+            <option value="+1">🇺🇸 +1 ABD / Kanada</option>
+            <option value="+34">🇪🇸 +34 İspanya</option>
+            <option value="+39">🇮🇹 +39 İtalya</option>
+            <option value="+32">🇧🇪 +32 Belçika</option>
+            <option value="+41">🇨🇭 +41 İsviçre</option>
+            <option value="+43">🇦🇹 +43 Avusturya</option>
+            <option value="+30">🇬🇷 +30 Yunanistan</option>
+            <option value="+380">🇺🇦 +380 Ukrayna</option>
+            <option value="+48">🇵🇱 +48 Polonya</option>
+            <option value="+45">🇩🇰 +45 Danimarka</option>
+            <option value="+46">🇸🇪 +46 İsveç</option>
+            <option value="+47">🇳🇴 +47 Norveç</option>
+            <option value="+358">🇫🇮 +358 Finlandiya</option>
+          </select>
+          <input id="guestPhone" type="tel" inputmode="tel" autocomplete="tel"
+                 placeholder="Telefon numarası" maxlength="15"
+                 oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                 onkeydown="if(event.key==='Enter') odaGirisYap()">
+        </div>
+      </div>
+
+      <div>
+        <label class="room-login-label" for="roomPassword">🏠 Oda / Daire Numarası</label>
+        <input id="roomPassword" type="password" inputmode="numeric" autocomplete="off"
+               placeholder="Oda numarası" maxlength="5"
+               onkeydown="if(event.key==='Enter') odaGirisYap()">
+      </div>
+    </div>
+
+    <button type="button" onclick="odaGirisYap()" id="loginContinueBtn">Devam Et</button>
+    <div id="roomLoginError" class="room-login-error"></div>
+  </div>
+</div>
+<div id="guestApp">
+<div class="form-container"> 
+ 
+<img src="logo.jpg" alt="Club Armonia Bodrum Evleri Logo" class="logo"> 
+<h2 id="txtFormTitle">Marangoz Arıza Bildirimi</h2>
+<div id="txtDahiliTel" style="text-align:center;margin:-14px 0 20px 0;font-size:18px;font-weight:900;color:#0f172a;">
+  ☎️ Marangozhane Dahili Tel: <span style="color:#dc2626;font-weight:900;">741</span>
+</div> 
+<form id="arizaForm" onsubmit="formGonder(event)"> 
+<input type="hidden" id="odaNo">
+<span id="locationPreview" class="location-preview" style="display:none;"></span> 
+
+<div class="form-group"> 
+<label for="arizaTuru" id="lblArizaTuru">Arıza Türü <span>*</span></label> 
+<select id="arizaTuru" required></select> 
+</div> 
+<div class="form-group"> 
+<label for="randevuZamani" id="lblRandevuZamani">Servis Randevusu / Uygun Zaman <span>*</span></label> 
+<select id="randevuZamani" required onchange="toggleCustomTime()"></select> 
+<div id="customTimeGroup"> 
+<label id="lblCustomTime" style="font-size: 13px; margin-top: 8px; color: #334155;">Müsait Olduğunuz Saat / Zaman Dilimi:</label> 
+<input type="text" id="customTime" placeholder="Örn: 14:30 veya 15:00 - 17:00 arası"> 
+</div> 
+</div>
+<div class="form-group"> 
+<label id="lblFotograf">Fotoğraf Çek / Yükle <span>*</span></label> 
+<div class="file-input-wrapper"> 
+<input type="file" id="fotograf" class="hidden-file-input" accept="image/*" capture="environment" onchange="updateFileName()"> 
+<label for="fotograf" id="btnCustomFile" class="btn-custom-file">Fotoğraf Seç</label> 
+<span id="fileNameDisplay" class="file-name-display">Dosya seçilmedi</span> 
+</div> 
+</div> 
+<div class="form-group"> 
+<label for="aciklama" id="lblAciklama">Arıza Açıklaması <span>*</span></label> 
+<textarea id="aciklama" rows="3" data-i18n-placeholder="detailsPlaceholder" required></textarea>
+<div id="aciklamaOrnek" style="font-size:12px;color:#64748b;margin-top:6px;">
+  Örnek: Dolabın sağ kapağı kapanmıyor.
+</div> 
+</div> 
+<button type="submit" id="btnSubmit" class="btn-submit" data-i18n="submit">Bildirimi Gönder</button> 
+</form> 
+<hr> 
+<div class="records-title" id="txtRecordsTitle">📋 Son Arıza Kayıtları</div> 
+<table class="records-table"> 
+<thead> 
+<tr> 
+<th id="thOda">Oda</th> 
+<th id="thTur">Tür</th> 
+<th id="thDurum">Durum</th> 
+</tr> 
+</thead> 
+<tbody id="sonKayitlarBody"> 
+<tr> 
+<td colspan="4" style="text-align:center;" id="tdLoading">Yükleniyor...</td> </tr> 
+</tbody> 
+</table> 
+</div> 
+
+<script> 
+const firebaseConfig = { 
+apiKey: "AIzaSyC8f8EtkgTZu6zn0an9OUt-ZtVP-Z0z6DM", 
+authDomain: "armonia-marangoz-ariza.firebaseapp.com", 
+databaseURL: "https://armonia-marangoz-ariza-default-rtdb.europe-west1.firebasedatabase.app", 
+projectId: "armonia-marangoz-ariza", 
+storageBucket: "armonia-marangoz-ariza.firebasestorage.app", 
+messagingSenderId: "801043274637", 
+appId: "1:801043274637:web:a557d8174747814dd3fbc4" 
+}; 
+firebase.initializeApp(firebaseConfig); 
+const db = firebase.database(); 
+const botToken = "8749974818:AAGsZt0wOrImQdcBpsCzH_sm8ATFu9Uq6rc";
+// MARANGOZ ARIZA TELEGRAM GRUBU
+const TELEGRAM_GROUP_ID = "-1003586164484";
+const chatId = TELEGRAM_GROUP_ID; 
+let currentLang = "TR"; 
+
+const internalTelTranslations = {
+  TR: '☎️ Marangozhane Dahili Tel: <span style="color:#dc2626;font-weight:900;">741</span>',
+  EN: '☎️ Carpentry Workshop Ext. Tel: <span style="color:#dc2626;font-weight:900;">741</span>',
+  DE: '☎️ Tischlerwerkstatt Durchwahl: <span style="color:#dc2626;font-weight:900;">741</span>',
+  RU: '☎️ Внутренний телефон столярной мастерской: <span style="color:#dc2626;font-weight:900;">741</span>',
+  NL: '☎️ Intern telefoonnummer timmerwerkplaats: <span style="color:#dc2626;font-weight:900;">741</span>',
+  FR: '☎️ Poste interne menuiserie : <span style="color:#dc2626;font-weight:900;">741</span>',
+  HI: '☎️ बढ़ईगीरी कार्यशाला का आंतरिक फोन: <span style="color:#dc2626;font-weight:900;">741</span>',
+  AR: '☎️ الهاتف الداخلي لورشة النجارة: <span style="color:#dc2626;font-weight:900;">741</span>'
+};
+
+const translations = { 
+TR: { formTitle: "Marangoz Arıza Bildirimi", lblOdaNo: 'Oda / Daire No <span>*</span>', odaPlaceholder: 'Örn: 101', lblArizaTuru: 'Arıza Türü <span>*</span>', lblRandevuZamani: 'Servis Randevusu / Uygun Zaman <span>*</span>', lblFotograf: 'Fotoğraf Çek / Yükle <span>*</span>', btnFile: 'Fotoğraf Seç', noFile: 'Dosya seçilmedi', lblCustomTime: 'Müsait Olduğunuz Saat / Zaman Dilimi:', customTimePh: 'Örn: 14:30 veya 15:00 - 17:00 arası', lblAciklama: 'Arıza Açıklaması <span>*</span>', aciklamaPlaceholder: 'Arıza detayı...', btnSubmit: 'Bildirimi Gönder', btnSending: 'Gönderiliyor...', recordsTitle: '📋 Son Arıza Kayıtları', thOda: 'Oda', thTur: 'Tür', thDurum: 'Durum', noRecord: 'Kayıt bulunamadı.', notFoundBlock: '📍 Tanımlı Blok Bulunamadı', successMsg: 'Arıza kaydı başarıyla oluşturuldu ve ekibe iletildi.', errorMsg: 'Bir hata oluştu, lütfen tekrar deneyin.', blockText: 'BLOK', leftText: 'SOL', rightText: 'SAĞ', centerText: 'ORTA', lowerFloor: 'ALT KAT', upperFloor: 'ÜST KAT', arizaTurleri: [ { value: "", text: "-- Lütfen Seçiniz --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "Mutfak Veya Gardolap Çekmece/Ray Arızası" }, { value: "Komidin/Çekmece/Ray Arızası", text: "Komidin/Çekmece/Ray Arızası" }, { value: "Divan Arızası", text: "Divan Arızası" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası" }, { value: "Diğer Marangoz Arızaları", text: "Diğer Marangoz Arızaları" } ], randevuZamanlari: [ { value: "", text: "-- Lütfen Uygun Zamanı Seçiniz --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ Hemen / En Kısa Sürede" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 Sabah (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ Öğleden Sonra (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 Akşamüstü (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 Oda Müsait (Usta İstediği Zaman Gelebilir)" }, { value: "Özel Saat", text: "⏰ Özel saat / zaman belirtmek istiyorum" } ] }, 
+EN: { formTitle: "Carpentry Maintenance Request", lblOdaNo: 'Room / Apartment No <span>*</span>', odaPlaceholder: 'E.g. 101', lblArizaTuru: 'Issue Type <span>*</span>', lblRandevuZamani: 'Service Appointment / Preferred Time <span>*</span>', lblFotograf: 'Take / Upload Photo <span>*</span>', btnFile: 'Choose Photo', noFile: 'No file chosen', lblCustomTime: 'Your Preferred Time / Time Slot:', customTimePh: 'Ex: 14:30 or between 15:00 - 17:00', lblAciklama: 'Issue Description <span>*</span>', aciklamaPlaceholder: 'Details of the issue...', btnSubmit: 'Submit Request', btnSending: 'Submitting...', recordsTitle: '📋 Recent Maintenance Requests', thOda: 'Room', thTur: 'Type', thDurum: 'Status', noRecord: 'No records found.', notFoundBlock: '📍 Block Not Found', successMsg: 'Maintenance request created successfully and sent to the team.', errorMsg: 'An error occurred, please try again.', blockText: 'BLOCK', leftText: 'LEFT', rightText: 'RIGHT', centerText: 'CENTER', lowerFloor: 'GROUND FLOOR', upperFloor: 'UPPER FLOOR', arizaTurleri: [ { value: "", text: "-- Please Select --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "Cabinet / Door / Shelf / Hinge / Handle Issue" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "Kitchen or Wardrobe Drawer / Slide Issue" }, { value: "Komidin/Çekmece/Ray Arızası", text: "Nightstand Drawer / Slide Issue" }, { value: "Divan Arızası", text: "Sofa / Bed Frame Issue" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "Main Entrance Door / Lock / Hinge / Hanger Issue" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "Room or Bathroom Door / Lock / Hinge Issue" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "Bathroom Cabinet / Door / Handle Issue" }, { value: "Diğer Marangoz Arızaları", text: "Other Carpentry Issues" } ], randevuZamanlari: [ { value: "", text: "-- Please Select Preferred Time --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ Immediate / As Soon As Possible" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 Morning (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ Afternoon (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 Late Afternoon (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 Room Available Anytime" }, { value: "Özel Saat", text: "⏰ I want to specify a custom time" } ] }, 
+DE: { formTitle: "Tischler Reparaturanfrage", lblOdaNo: 'Zimmer- / Apartmentnr. <span>*</span>', odaPlaceholder: 'z.B. 101', lblArizaTuru: 'Art des Schadens <span>*</span>', lblRandevuZamani: 'Servicetermin / Bevorzugte Zeit <span>*</span>', lblFotograf: 'Foto aufnehmen / hochladen <span>*</span>', btnFile: 'Foto auswählen', noFile: 'Keine Datei ausgewählt', lblCustomTime: 'Ihre verfügbare Zeit / Zeitfenster:', customTimePh: 'Z.B: 14:30 oder zwischen 15:00 - 17:00', lblAciklama: 'Schadensbeschreibung <span>*</span>', aciklamaPlaceholder: 'Details des Problems...', btnSubmit: 'Anfrage absenden', btnSending: 'Wird gesendet...', recordsTitle: '📋 Letzte Anfragen', thOda: 'Zimmer', thTur: 'Art', thDurum: 'Status', noRecord: 'Keine Einträge gefunden.', notFoundBlock: '📍 Block nicht gefunden', successMsg: 'Die Anfrage wurde erfolgreich erstellt und an das Team übermittelt.', errorMsg: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.', blockText: 'BLOCK', leftText: 'LINKS', rightText: 'RECHTS', centerText: 'MITTE', lowerFloor: 'ERDGESCHOSS', upperFloor: 'OBERGESCHOSS', arizaTurleri: [ { value: "", text: "-- Bitte auswählen --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "Schrank / Tür / Regal / Scharnier / Griff" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "Küchen- oder Kleiderschrank-Schublade" }, { value: "Komidin/Çekmece/Ray Arızası", text: "Nachttisch-Schublade" }, { value: "Divan Arızası", text: "Sofa- / Bettgestell-Problem" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "Haupteingangstür / Schloss / Scharnier" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "Zimmer- oder Badezimmertür" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "Badezimmerschrank / Tür" }, { value: "Diğer Marangoz Arızaları", text: "Sonstige Tischlerarbeiten" } ], randevuZamanlari: [ { value: "", text: "-- Bitte bevorzugte Zeit auswählen --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ Sofort / So schnell wie möglich" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 Morgens (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ Nachmittags (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 Spätnachmittags (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 Zimmer jederzeit verfügbar" }, { value: "Özel Saat", text: "⏰ Ich möchte eine bestimmte Zeit angeben" } ] }, 
+RU: { formTitle: "Заявка на ремонт (Плотник)", lblOdaNo: 'Номер комнаты / апартаментов <span>*</span>', odaPlaceholder: 'Напр: 101', lblArizaTuru: 'Тип неисправности <span>*</span>', lblRandevuZamani: 'Удобное время для мастера <span>*</span>', lblFotograf: 'Сделать / загрузить фото <span>*</span>', btnFile: 'Выбрать фото', noFile: 'Файл не выбран', lblCustomTime: 'Удобное время / интервал:', customTimePh: 'Напр: 14:30 или с 15:00 до 17:00', lblAciklama: 'Описание проблемы <span>*</span>', aciklamaPlaceholder: 'Подробности поломки...', btnSubmit: 'Отправить заявку', btnSending: 'Отправка...', recordsTitle: '📋 Последние заявки', thOda: 'Комната', thTur: 'Тип', thDurum: 'Статус', noRecord: 'Записи не найдены.', notFoundBlock: '📍 Блок не найден', successMsg: 'Заявка успешно создана и передана команде.', errorMsg: 'Произошла ошибка, попробуйте еще раз.', blockText: 'БЛОК', leftText: 'СЛЕВА', rightText: 'СПРАВА', centerText: 'ЦЕНТР', lowerFloor: 'НИЖНИЙ ЭТАЖ', upperFloor: 'ВЕРХНИЙ ЭТАЖ', arizaTurleri: [ { value: "", text: "-- Выберите вариант --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "Шкаф / Дверца / Полка / Петля / Ручка" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "Выдвижной ящик кухни или гардероба" }, { value: "Komidin/Çekmece/Ray Arızası", text: "Ящик прикроватной тумбы" }, { value: "Divan Arızası", text: "Диван / Каркас кровати" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "Входная дверь / Замок / Петли" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "Межкомнатная дверь или дверь в ванную" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "Шкаф в ванной / Дверца" }, { value: "Diğer Marangoz Arızaları", text: "Другие плотницкие работы" } ], randevuZamanlari: [ { value: "", text: "-- Выберите удобное время --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ Срочно / Как можно скорее" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 Утро (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ День (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 Вечер (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 Номер свободен (мастер может прийти в любое время)" }, { value: "Özel Saat", text: "⏰ Я хочу указать свое время" } ] }, 
+NL: { formTitle: "Onderhoudsverzoek Timmerwerk", lblOdaNo: 'Kamer / Appartement Nr <span>*</span>', odaPlaceholder: 'Bijv: 101', lblArizaTuru: 'Type Probleem <span>*</span>', lblRandevuZamani: 'Service Afspraak / Voorkeurstijd <span>*</span>', lblFotograf: 'Foto maken / uploaden <span>*</span>', btnFile: 'Foto kiezen', noFile: 'Geen bestand gekozen', lblCustomTime: 'Uw beschikbare tijd / tijdslot:', customTimePh: 'Bijv: 14:30 of tussen 15:00 - 17:00', lblAciklama: 'Beschrijving van het probleem <span>*</span>', aciklamaPlaceholder: 'Details van het probleem...', btnSubmit: 'Aanvraag Verzenden', btnSending: 'Verzenden...', recordsTitle: '📋 Recente Aanvragen', thOda: 'Kamer', thTur: 'Type', thDurum: 'Status', noRecord: 'Geen gegevens gevonden.', notFoundBlock: '📍 Blok niet gevonden', successMsg: 'Onderhoudsverzoek succesvol aangemaakt en verzonden.', errorMsg: 'Er is een fout opgetreden, geprobeerd het opnieuw.', blockText: 'BLOK', leftText: 'LINKS', rightText: 'RECHTS', centerText: 'MIDDEN', lowerFloor: 'BEGANE GROND', upperFloor: 'BOVENVERDIEPING', arizaTurleri: [ { value: "", text: "-- Selecteer a.u.b. --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "Kast / Deur / Plank / Scharnier / Handgreep" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "Keuken- of Kledingkast lade" }, { value: "Komidin/Çekmece/Ray Arızası", text: "Nachtkastje lade" }, { value: "Divan Arızası", text: "Slaapbank / Bedframe" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "Voordeur / Slot / Scharnier" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "Kamer- of Badkamerdeur" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "Badkamermeubel / Deur" }, { value: "Diğer Marangoz Arızaları", text: "Overige Timmerwerkzaamheden" } ], randevuZamanlari: [ { value: "", text: "-- Selecteer voorkeurstijd --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ ZSM / Direct" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 Ochtend (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ Middag (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 Laat in de middag (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 Kamer altijd beschikbaar" }, { value: "Özel Saat", text: "⏰ Ik wil een specifieke tijd opgeven" } ] }, 
+FR: { formTitle: "Demande de Réparation Menuiserie", lblOdaNo: 'N° de Chambre / Appartement <span>*</span>', odaPlaceholder: 'Ex: 101', lblArizaTuru: 'Type de Problème <span>*</span>', lblRandevuZamani: 'Rendez-vous / Heure Souhaitée <span>*</span>', lblFotograf: 'Prendre / Charger une photo <span>*</span>', btnFile: 'Choisir une photo', noFile: 'Aucun fichier choisi', lblCustomTime: 'Votre heure / créneau disponible:', customTimePh: 'Ex: 14:30 ou entre 15:00 - 17:00', lblAciklama: 'Description du problème <span>*</span>', aciklamaPlaceholder: 'Détails du problème...', btnSubmit: 'Envoyer la demande', btnSending: 'Envoi en cours...', recordsTitle: '📋 Dernières Demandes', thOda: 'Chambre', thTur: 'Type', thDurum: 'Statut', noRecord: 'Aucun enregistrement trouvé.', notFoundBlock: '📍 Bloc non trouvé', successMsg: 'La demande a été créée avec succès et transmise à l\'équipe.', errorMsg: 'Une erreur est survenue, veuillez réessayer.', blockText: 'BLOC', leftText: 'GAUCHE', rightText: 'DROITE', centerText: 'CENTRE', lowerFloor: 'REZ-DE-CHAUSSÉE', upperFloor: 'ÉTAGE SUPÉRIEUR', arizaTurleri: [ { value: "", text: "-- Veuillez sélectionner --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "Armoire / Porte / Étagère / Charnière / Poignée" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "Tiroir de cuisine ou d'armoire" }, { value: "Komidin/Çekmece/Ray Arızası", text: "Tiroir de table de chevet" }, { value: "Divan Arızası", text: "Canapé / Cadre de lit" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "Porte d'entrée / Serrure / Charnière" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "Porte de chambre ou de salle de bain" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "Meuble de salle de bain / Porte" }, { value: "Diğer Marangoz Arızaları", text: "Autres travaux de menuiserie" } ], randevuZamanlari: [ { value: "", text: "-- Veuillez choisir l'heure souhaitée --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ Immédiat / Dès que possible" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 Matin (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ Après-midi (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 Fin d'après-midi (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 Chambre disponible à tout moment" }, { value: "Özel Saat", text: "⏰ Je souhaite préciser une heure spécifique" } ] }, 
+HI: { formTitle: "बढ़ईगीरी मर्मत अनुरोध", lblOdaNo: 'कमरा / अपार्टमेंट संख्या <span>*</span>', odaPlaceholder: 'उदा: 101', lblArizaTuru: 'समस्या का प्रकार <span>*</span>', lblRandevuZamani: 'सेवा का समय / पसंदीदा समय <span>*</span>', lblFotograf: 'फोटो खींचें / अपलोड करें <span>*</span>', btnFile: 'फोटो चुनें', noFile: 'कोई फ़ाइल चुनी नहीं गई', lblCustomTime: 'आपका पसंदीदा समय / समय अंतराल:', customTimePh: 'उदा: 14:30 या 15:00 - 17:00 के बीच', lblAciklama: 'समस्या का विवरण <span>*</span>', aciklamaPlaceholder: 'समस्या का विवरण...', btnSubmit: 'अनुरोध भेजें', btnSending: 'भेजा जा रहा है...', recordsTitle: '📋 हाल के अनुरोध', thOda: 'कमरा', thTur: 'प्रकार', thDurum: 'स्थिति', noRecord: 'कोई रिकॉर्ड नहीं मिला।', notFoundBlock: '📍 ब्लॉक नहीं मिला', successMsg: 'मर्मत का अनुरोध सफलतापूर्वक बनाया गया और टीम को भेज दिया गया।', errorMsg: 'एक त्रुटि हुई, कृपया पुनः प्रयास करें।', blockText: 'ब्लॉक', leftText: 'बायें', rightText: 'दाएँ', centerText: 'मध्य', lowerFloor: 'निचली मंजिल', upperFloor: 'ऊपरी मंजिल', arizaTurleri: [ { value: "", text: "-- कृपया चुनें --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "अलमारी / दरवाजा / शेल्फ / कब्जा / हैंडल की समस्या" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "रसोई या अलमारी दराज / स्लाइड की समस्या" }, { value: "Komidin/Çekmece/Ray Arızası", text: "नाइटस्टैंड दराज की समस्या" }, { value: "Divan Arızası", text: "सोफा / बेड फ्रेम की समस्या" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "मुख्य प्रवेश द्वार / ताला / कब्जा समस्या" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "कमरे या बाथरूम के दरवाजे की समस्या" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "बाथरूम कैबिनेट / दरवाजा समस्या" }, { value: "Diğer Marangoz Arızaları", text: "अन्य बढ़ईगीरी संबंधी समस्याएं" } ], randevuZamanlari: [ { value: "", text: "-- कृपया पसंदीदा समय चुनें --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ तुरंत / जितनी जल्दी हो सके" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 सुबह (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ दोपहर (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 देर दोपहर (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 कमरा किसी भी समय उपलब्ध है" }, { value: "Özel Saat", text: "⏰ मैं एक विशेष समय निर्दिष्ट करना चाहता हूं" } ] }, 
+AR: { formTitle: "طلب صيانات النجارة", lblOdaNo: 'رقم الغرفة / الشقة <span>*</span>', odaPlaceholder: 'مثال: 101', lblArizaTuru: 'نوع العطل <span>*</span>', lblRandevuZamani: 'موعد الخدمة / الوقت المناسب <span>*</span>', lblFotograf: 'التقاط / تحميل صورة <span>*</span>', btnFile: 'اختر صورة', noFile: 'لم يتم اختيار ملف', lblCustomTime: 'الوقت المناسب لك / الفترة الزمنية:', customTimePh: 'مثال: 14:30 أو بين 15:00 - 17:00', lblAciklama: 'وصف المشكلة <span>*</span>', aciklamaPlaceholder: 'تفاصيل العطل...', btnSubmit: 'إرسال الطلب', btnSending: 'جاري الإرسال...', recordsTitle: '📋 أحدث الطلبات', thOda: 'الغرفة', thTur: 'النوع', thDurum: 'الحالة', noRecord: 'لا توجد سجلات.', notFoundBlock: '📍 لم يتم العثور على المجمع', successMsg: 'تم إنشاء طلب الصيانة بنجاح وإرساله إلى الفريق.', errorMsg: 'حدث خطأ، يرجى المحاولة مرة أخرى.', blockText: 'مجمع', leftText: 'يسار', rightText: 'يمين', centerText: 'وسط', lowerFloor: 'الطابق السفلي', upperFloor: 'الطابق العلوي', arizaTurleri: [ { value: "", text: "-- يرجى الاختيار --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "عطل في الخزانة / الباب / الرف / المفصلة / المقبض" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "عطل في أدراج المطبخ أو الخزانة" }, { value: "Komidin/Çekmece/Ray Arızası", text: "عطل في درج الطاولة الجانبية" }, { value: "Divan Arızası", text: "عطل في الأريكة / إطار السرير" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "عطل في باب المدخل الخشبي / القفل / المفصلات" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "عطل في باب الغرفة أو الحمام" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "عطل في خزانة الحمام / الباب" }, { value: "Diğer Marangoz Arızaları", text: "أعطال نجارة أخرى" } ], randevuZamanlari: [ { value: "", text: "-- يرجى تحديد الوقت المناسب --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ فوراً / في أسرع وقت ممكن" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 صباحاً (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ بعد الظهر (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 المساء (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 الغرفة متاحة في أي وقت" }, { value: "Özel Saat", text: "⏰ أريد تحديد وقت معين" } ] }, 
+KU: { formTitle: "Daxwaza Tamîrkirina Darezaniyê", lblOdaNo: 'Jimara Odeyê / Apartmanê <span>*</span>', odaPlaceholder: 'Mînak: 101', lblArizaTuru: 'Cûreyê Xesarê <span>*</span>', lblRandevuZamani: 'Demjimêra Xizmetê / Dema Gunfawî <span>*</span>', lblFotograf: 'Wêne Bikişîne / Bar Bike <span>*</span>', btnFile: 'Wêne Hilbijêre', noFile: 'Dosye nehat hilbijartin', lblCustomTime: 'Demjimêra ku hûn vala ne:', customTimePh: 'Mînak: 14:30 an jî di navbera 15:00 - 17:00', lblAciklama: 'Daxuyaniya Xesarê <span>*</span>', aciklamaPlaceholder: 'Karesata xesarê...', btnSubmit: 'Daxwazê Bişîne', btnSending: 'Tê şandin...', recordsTitle: '📋 Tomarên Dawî', thOda: 'Ode', thTur: 'Cûre', thDurum: 'Rewş', noRecord: 'Tomar nehat dîtin.', notFoundBlock: '📍 Blok Nehat Dîtin', successMsg: 'Têketina xesarê bi serkeftî hate çêkirin û ji tîmê re hate şandin.', errorMsg: 'Çewtiyek çêbû, ji kerema xwe dîsa biceribîne.', blockText: 'BLOK', leftText: 'ÇEP', rightText: 'RAST', centerText: 'NAVENDA', lowerFloor: 'QATA JÊRÊ', upperFloor: 'QATA JORÊ', arizaTurleri: [ { value: "", text: "-- Ji kerema xwe hilbijêrin --" }, { value: "Dolap/Kapak/Raf/Menteşe/Kulp/Piston Arızası", text: "Xesara Dolab / Derî / Rêz / Menteşe / Destik" }, { value: "Mutfak Veya Gardolap Çekmece/Ray Arızası", text: "Xesara Çekmeceya Metbexê an Gardrobê" }, { value: "Komidin/Çekmece/Ray Arızası", text: "Xesara Çekmeceya Komîdînê" }, { value: "Divan Arızası", text: "Xesara Dîvan / Çarçoveya Cihê Razanê" }, { value: "Giriş Ağaç kapı/Menteşe/Kilit/Kol/Emniyet Kilit/Askılık Arızası", text: "Deriyê Ketinê / Kilît / Menteşe" }, { value: "Oda veya Banyo kapı/Menteşe/Kilit/Kol/Askılık Arızası", text: "Deriyê Odeyê an Banyolê" }, { value: "Banyo Dolabı/Kapak/Menteşe/Kulp Arızası", text: "Dolaba Banyolê / Derî" }, { value: "Diğer Marangoz Arızaları", text: "Xesarên Din Ên Darezaniyê" } ], randevuZamanlari: [ { value: "", text: "-- Ji kerema xwe dema guncan hilbijêrin --" }, { value: "Hemen / En Kısa Sürede", text: "⚡ Zû de / Di demeke kurt de" }, { value: "Sabah (09:00 - 12:00)", text: "🌅 Beyanî (09:00 - 12:00)" }, { value: "Öğleden Sonra (12:00 - 15:00)", text: "☀️ Piştî Nîvro (12:00 - 15:00)" }, { value: "Akşamüstü (15:00 - 18:00)", text: "🌆 Êvarî (15:00 - 18:00)" }, { value: "Oda Müsait (Usta İstediği Zaman Gelebilir)", text: "🔑 Ode Guncan e (Usta çaxê bixwaze dikare bête)" }, { value: "Özel Saat", text: "⏰ Ez dixwazim demjimêreke taybet diyar bikim" } ] } 
+
+};
+
+// Tekrar gönderme bölümü formdaki dil sistemiyle aynı dilleri kullanır.
+const tekrarGonderDil = {
+  TR: {
+    repeatSend: "Bildirimi Tekrar Gönder",
+    loadedNeedPhoto: "Kayıt forma aktarıldı. Lütfen fotoğrafı yeniden seçin. Fotoğrafı seçtiğinizde tekrar gönderim yapılacaktır.",
+    notFound: "Kayıt bulunamadı.",
+    resendError: "Tekrar gönderme sırasında bir hata oluştu.",
+    action: "İşlem"
+  },
+  EN: {
+    repeatSend: "Send Request Again",
+    loadedNeedPhoto: "The record has been loaded. Please select the photo again. It will be sent again after you select the photo.",
+    notFound: "Record not found.",
+    resendError: "An error occurred while resending.",
+    action: "Action"
+  },
+  DE: {
+    repeatSend: "Anfrage erneut senden",
+    loadedNeedPhoto: "Der Datensatz wurde geladen. Bitte wählen Sie das Foto erneut aus. Nach der Auswahl wird die Anfrage erneut gesendet.",
+    notFound: "Datensatz nicht gefunden.",
+    resendError: "Beim erneuten Senden ist ein Fehler aufgetreten.",
+    action: "Aktion"
+  },
+  RU: {
+    repeatSend: "Повторно отправить заявку",
+    loadedNeedPhoto: "Запись загружена. Пожалуйста, выберите фотографию снова. После выбора заявка будет отправлена повторно.",
+    notFound: "Запись не найдена.",
+    resendError: "Произошла ошибка при повторной отправке.",
+    action: "Действие"
+  },
+  NL: {
+    repeatSend: "Melding opnieuw verzenden",
+    loadedNeedPhoto: "De registratie is geladen. Selecteer de foto opnieuw. Daarna wordt de aanvraag opnieuw verzonden.",
+    notFound: "Registratie niet gevonden.",
+    resendError: "Er is een fout opgetreden bij het opnieuw verzenden.",
+    action: "Actie"
+  },
+  FR: {
+    repeatSend: "Renvoyer la demande",
+    loadedNeedPhoto: "L'enregistrement a été chargé. Sélectionnez à nouveau la photo. Après sélection, la demande sera renvoyée.",
+    notFound: "Enregistrement introuvable.",
+    resendError: "Une erreur s'est produite lors du renvoi.",
+    action: "Action"
+  },
+  HI: {
+    repeatSend: "अनुरोध फिर से भेजें",
+    loadedNeedPhoto: "रिकॉर्ड लोड हो गया है। कृपया फोटो फिर से चुनें। फोटो चुनने के बाद अनुरोध फिर से भेज दिया जाएगा।",
+    notFound: "रिकॉर्ड नहीं मिला।",
+    resendError: "दोबारा भेजते समय एक त्रुटि हुई।",
+    action: "कार्रवाई"
+  },
+  AR: {
+    repeatSend: "إرسال الطلب مرة أخرى",
+    loadedNeedPhoto: "تم تحميل السجل. يرجى اختيار الصورة مرة أخرى. بعد اختيارها سيتم إرسال الطلب مرة أخرى.",
+    notFound: "لم يتم العثور على السجل.",
+    resendError: "حدث خطأ أثناء إعادة الإرسال.",
+    action: "الإجراء"
+  },
+  KU: {
+    repeatSend: "Daxwazê Dîsa Bişîne",
+    loadedNeedPhoto: "Tomar li formê hate barkirin. Ji kerema xwe wêneyê dîsa hilbijêre. Piştî hilbijartinê dê daxwaz dîsa bê şandin.",
+    notFound: "Tomar nehat dîtin.",
+    resendError: "Di şandina dîsa de çewtiyek çêbû.",
+    action: "Kar"
+  }
+};
+
+Object.keys(tekrarGonderDil).forEach(code => {
+  if (translations[code]) Object.assign(translations[code], tekrarGonderDil[code]);
+});
+
+// Son Arıza Kayıtları > Durum alanı da formdaki tercih edilen dile göre gösterilir.
+// Firebase'deki gerçek durum değeri değiştirilmez; yalnızca ekranda çevrilir.
+const durumDil = {
+  TR: {
+    "Yeni":"Yeni", "Bekliyor":"Bekliyor", "İşlemde":"İşlemde",
+    "Parça Bekliyor":"Parça Bekliyor", "Parç. Bekliyor":"Parç. Bekliyor",
+    "Tamamlandı":"Tamamlandı", "İptal":"İptal", "Usta Atandı":"Usta Atandı"
+  },
+  EN: {
+    "Yeni":"New", "Bekliyor":"Waiting", "İşlemde":"In Progress",
+    "Parça Bekliyor":"Waiting for Parts", "Parç. Bekliyor":"Waiting for Parts",
+    "Tamamlandı":"Completed", "İptal":"Cancelled", "Usta Atandı":"Technician Assigned"
+  },
+  DE: {
+    "Yeni":"Neu", "Bekliyor":"Warten", "İşlemde":"In Bearbeitung",
+    "Parça Bekliyor":"Warten auf Ersatzteile", "Parç. Bekliyor":"Warten auf Ersatzteile",
+    "Tamamlandı":"Abgeschlossen", "İptal":"Storniert", "Usta Atandı":"Techniker zugewiesen"
+  },
+  RU: {
+    "Yeni":"Новая", "Bekliyor":"Ожидание", "İşlemde":"В работе",
+    "Parça Bekliyor":"Ожидание запчастей", "Parç. Bekliyor":"Ожидание запчастей",
+    "Tamamlandı":"Завершено", "İptal":"Отменено", "Usta Atandı":"Назначен мастер"
+  },
+  NL: {
+    "Yeni":"Nieuw", "Bekliyor":"In afwachting", "İşlemde":"In behandeling",
+    "Parça Bekliyor":"Wachten op onderdelen", "Parç. Bekliyor":"Wachten op onderdelen",
+    "Tamamlandı":"Voltooid", "İptal":"Geannuleerd", "Usta Atandı":"Technicus toegewezen"
+  },
+  FR: {
+    "Yeni":"Nouveau", "Bekliyor":"En attente", "İşlemde":"En cours",
+    "Parça Bekliyor":"En attente de pièces", "Parç. Bekliyor":"En attente de pièces",
+    "Tamamlandı":"Terminé", "İptal":"Annulé", "Usta Atandı":"Technicien affecté"
+  },
+  HI: {
+    "Yeni":"नया", "Bekliyor":"प्रतीक्षा में", "İşlemde":"कार्य प्रगति पर",
+    "Parça Bekliyor":"पुर्ज़ों की प्रतीक्षा", "Parç. Bekliyor":"पुर्ज़ों की प्रतीक्षा",
+    "Tamamlandı":"पूर्ण", "İptal":"रद्द", "Usta Atandı":"तकनीशियन नियुक्त"
+  },
+  AR: {
+    "Yeni":"جديد", "Bekliyor":"قيد الانتظار", "İşlemde":"قيد التنفيذ",
+    "Parça Bekliyor":"بانتظار القطع", "Parç. Bekliyor":"بانتظار القطع",
+    "Tamamlandı":"مكتمل", "İptal":"ملغى", "Usta Atandı":"تم تعيين الفني"
+  },
+  KU: {
+    "Yeni":"Nû", "Bekliyor":"Li bendê", "İşlemde":"Di pêvajoyê de",
+    "Parça Bekliyor":"Li benda parçeyan", "Parç. Bekliyor":"Li benda parçeyan",
+    "Tamamlandı":"Qediya", "İptal":"Betal", "Usta Atandı":"Usta hate tayîn kirin"
+  }
+};
+
+
+// SON ARIZA KAYITLARI - FORMDAKİ TÜM DİLLER
+const sonKayitDil = {
+  TR: {
+    title:"Son Arıza Kayıtları", date:"Tarih", room:"Oda", type:"Arıza Türü",
+    time:"Uygun Zaman", description:"Açıklama", status:"Durum", action:"İşlem",
+    noRecord:"Henüz arıza kaydı bulunmuyor.", resend:"Bildirimi Tekrar Gönder",
+    view:"Görüntüle", close:"Kapat", delete:"Sil", technician:"Görevli Usta",
+    note:"Usta Notu", assigned:"Atandı", notAssigned:"Atanmadı",
+    waiting:"Bekliyor", newRecord:"Yeni", inProgress:"İşlemde",
+    parts:"Parça Bekliyor", completed:"Tamamlandı", cancelled:"İptal",
+    repaired:"Arıza Giderildi", confirmDelete:"Bu kaydı silmek istediğinize emin misiniz?"
+  },
+  EN: {
+    title:"Recent Fault Records", date:"Date", room:"Room", type:"Fault Type",
+    time:"Available Time", description:"Description", status:"Status", action:"Action",
+    noRecord:"No fault records yet.", resend:"Send Request Again",
+    view:"View", close:"Close", delete:"Delete", technician:"Assigned Technician",
+    note:"Technician Note", assigned:"Assigned", notAssigned:"Not Assigned",
+    waiting:"Waiting", newRecord:"New", inProgress:"In Progress",
+    parts:"Waiting for Parts", completed:"Completed", cancelled:"Cancelled",
+    repaired:"Fault Repaired", confirmDelete:"Are you sure you want to delete this record?"
+  },
+  DE: {
+    title:"Letzte Störungsmeldungen", date:"Datum", room:"Zimmer", type:"Störungsart",
+    time:"Verfügbare Zeit", description:"Beschreibung", status:"Status", action:"Aktion",
+    noRecord:"Noch keine Störungsmeldungen vorhanden.", resend:"Anfrage erneut senden",
+    view:"Anzeigen", close:"Schließen", delete:"Löschen", technician:"Zugewiesener Techniker",
+    note:"Technikernotiz", assigned:"Zugewiesen", notAssigned:"Nicht zugewiesen",
+    waiting:"Warten", newRecord:"Neu", inProgress:"In Bearbeitung",
+    parts:"Warten auf Ersatzteile", completed:"Abgeschlossen", cancelled:"Storniert",
+    repaired:"Störung behoben", confirmDelete:"Möchten Sie diesen Datensatz wirklich löschen?"
+  },
+  RU: {
+    title:"Последние заявки по неисправностям", date:"Дата", room:"Номер", type:"Тип неисправности",
+    time:"Доступное время", description:"Описание", status:"Статус", action:"Действие",
+    noRecord:"Заявок по неисправностям пока нет.", resend:"Повторно отправить заявку",
+    view:"Просмотр", close:"Закрыть", delete:"Удалить", technician:"Назначенный мастер",
+    note:"Примечание мастера", assigned:"Назначен", notAssigned:"Не назначен",
+    waiting:"Ожидание", newRecord:"Новая", inProgress:"В работе",
+    parts:"Ожидание запчастей", completed:"Завершено", cancelled:"Отменено",
+    repaired:"Неисправность устранена", confirmDelete:"Вы уверены, что хотите удалить эту запись?"
+  },
+  NL: {
+    title:"Recente storingsmeldingen", date:"Datum", room:"Kamer", type:"Storingstype",
+    time:"Beschikbare tijd", description:"Beschrijving", status:"Status", action:"Actie",
+    noRecord:"Nog geen storingsmeldingen.", resend:"Melding opnieuw verzenden",
+    view:"Bekijken", close:"Sluiten", delete:"Verwijderen", technician:"Toegewezen technicus",
+    note:"Notitie technicus", assigned:"Toegewezen", notAssigned:"Niet toegewezen",
+    waiting:"In afwachting", newRecord:"Nieuw", inProgress:"In behandeling",
+    parts:"Wachten op onderdelen", completed:"Voltooid", cancelled:"Geannuleerd",
+    repaired:"Storing verholpen", confirmDelete:"Weet u zeker dat u deze registratie wilt verwijderen?"
+  },
+  FR: {
+    title:"Dernières demandes de dépannage", date:"Date", room:"Chambre", type:"Type de panne",
+    time:"Heure disponible", description:"Description", status:"Statut", action:"Action",
+    noRecord:"Aucune demande de dépannage pour le moment.", resend:"Renvoyer la demande",
+    view:"Afficher", close:"Fermer", delete:"Supprimer", technician:"Technicien affecté",
+    note:"Note du technicien", assigned:"Affecté", notAssigned:"Non affecté",
+    waiting:"En attente", newRecord:"Nouveau", inProgress:"En cours",
+    parts:"En attente de pièces", completed:"Terminé", cancelled:"Annulé",
+    repaired:"Panne réparée", confirmDelete:"Voulez-vous vraiment supprimer cet enregistrement ?"
+  },
+  HI: {
+    title:"हाल की खराबी रिपोर्ट", date:"दिनांक", room:"कमरा", type:"खराबी का प्रकार",
+    time:"उपलब्ध समय", description:"विवरण", status:"स्थिति", action:"कार्रवाई",
+    noRecord:"अभी कोई खराबी रिकॉर्ड नहीं है।", resend:"अनुरोध फिर से भेजें",
+    view:"देखें", close:"बंद करें", delete:"हटाएं", technician:"नियुक्त तकनीशियन",
+    note:"तकनीशियन नोट", assigned:"नियुक्त", notAssigned:"नियुक्त नहीं",
+    waiting:"प्रतीक्षा में", newRecord:"नया", inProgress:"कार्य प्रगति पर",
+    parts:"पुर्ज़ों की प्रतीक्षा", completed:"पूर्ण", cancelled:"रद्द",
+    repaired:"खराबी ठीक की गई", confirmDelete:"क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं?"
+  },
+  AR: {
+    title:"آخر بلاغات الأعطال", date:"التاريخ", room:"الغرفة", type:"نوع العطل",
+    time:"الوقت المتاح", description:"الوصف", status:"الحالة", action:"الإجراء",
+    noRecord:"لا توجد بلاغات أعطال حتى الآن.", resend:"إرسال الطلب مرة أخرى",
+    view:"عرض", close:"إغلاق", delete:"حذف", technician:"الفني المعيّن",
+    note:"ملاحظة الفني", assigned:"تم التعيين", notAssigned:"غير معيّن",
+    waiting:"قيد الانتظار", newRecord:"جديد", inProgress:"قيد التنفيذ",
+    parts:"بانتظار القطع", completed:"مكتمل", cancelled:"ملغى",
+    repaired:"تم إصلاح العطل", confirmDelete:"هل أنت متأكد من حذف هذا السجل؟"
+  },
+  KU: {
+    title:"Tomarên Xesarên Dawî", date:"Dîrok", room:"Ode", type:"Cureya Xesarê",
+    time:"Dema Guncan", description:"Danasîn", status:"Rewş", action:"Kar",
+    noRecord:"Hêj tomarên xesarê tune ne.", resend:"Daxwazê Dîsa Bişîne",
+    view:"Bibîne", close:"Bigire", delete:"Jê bibe", technician:"Usta Tayînkirî",
+    note:"Nota Usta", assigned:"Hate tayînkirin", notAssigned:"Nehate tayînkirin",
+    waiting:"Li bendê", newRecord:"Nû", inProgress:"Di pêvajoyê de",
+    parts:"Li benda parçeyan", completed:"Qediya", cancelled:"Betal",
+    repaired:"Xesar hate çareserkirin", confirmDelete:"Ma tu bi rastî dixwazî vê tomarê jê bibî?"
+  }
+};
+
+Object.keys(sonKayitDil).forEach(code => {
+  if (translations[code]) Object.assign(translations[code], sonKayitDil[code]);
+});
+
+
+const UI_ALL_LANGS = {
+TR:{submit:"Talebi Gönder",sending:"Gönderiliyor...",reset:"Temizle",language:"Tercih Edilen Dil",room:"Oda / Daire No",issueType:"Arıza Türü",appointment:"Uygun Zaman",description:"Arıza Açıklaması",detailsPlaceholder:"Arızanın detaylarını yazınız...",photo:"Arıza Fotoğrafı",choosePhoto:"Fotoğraf Seç",noFile:"Dosya seçilmedi",location:"Konum",recent:"Son Arıza Kayıtları",receipt:"Arıza Bildirim Fişi",save:"Kaydet",done:"Tamam",print:"Yazdır",close:"Kapat",resend:"Bildirimi Tekrar Gönder",view:"Görüntüle",delete:"Sil",action:"İşlem",date:"Tarih",status:"Durum",technician:"Görevli Usta",note:"Usta Notu",assigned:"Atandı",notAssigned:"Atanmadı",noRecord:"Henüz arıza kaydı bulunmuyor.",repaired:"Arıza Giderildi"},
+EN:{submit:"Submit Request",sending:"Sending...",reset:"Clear",language:"Preferred Language",room:"Room / Apartment No.",issueType:"Fault Type",appointment:"Available Time",description:"Fault Description",detailsPlaceholder:"Enter the details of the issue...",photo:"Fault Photo",choosePhoto:"Choose Photo",noFile:"No file selected",location:"Location",recent:"Recent Fault Records",receipt:"Fault Report Receipt",save:"Save",done:"Done",print:"Print",close:"Close",resend:"Send Request Again",view:"View",delete:"Delete",action:"Action",date:"Date",status:"Status",technician:"Assigned Technician",note:"Technician Note",assigned:"Assigned",notAssigned:"Not Assigned",noRecord:"No fault records yet.",repaired:"Fault Repaired"},
+DE:{submit:"Anfrage senden",sending:"Wird gesendet...",reset:"Löschen",language:"Bevorzugte Sprache",room:"Zimmer-/Apartment-Nr.",issueType:"Störungsart",appointment:"Verfügbare Zeit",description:"Störungsbeschreibung",detailsPlaceholder:"Details der Störung eingeben...",photo:"Störungsfoto",choosePhoto:"Foto auswählen",noFile:"Keine Datei ausgewählt",location:"Standort",recent:"Letzte Störungsmeldungen",receipt:"Störungsmeldeschein",save:"Speichern",done:"Fertig",print:"Drucken",close:"Schließen",resend:"Anfrage erneut senden",view:"Anzeigen",delete:"Löschen",action:"Aktion",date:"Datum",status:"Status",technician:"Zugewiesener Techniker",note:"Technikernotiz",assigned:"Zugewiesen",notAssigned:"Nicht zugewiesen",noRecord:"Noch keine Störungsmeldungen.",repaired:"Störung behoben"},
+RU:{submit:"Отправить заявку",sending:"Отправка...",reset:"Очистить",language:"Предпочтительный язык",room:"Номер комнаты / квартиры",issueType:"Тип неисправности",appointment:"Доступное время",description:"Описание неисправности",detailsPlaceholder:"Введите подробности неисправности...",photo:"Фото неисправности",choosePhoto:"Выбрать фото",noFile:"Файл не выбран",location:"Местоположение",recent:"Последние заявки по неисправностям",receipt:"Квитанция о заявке",save:"Сохранить",done:"Готово",print:"Печать",close:"Закрыть",resend:"Повторно отправить заявку",view:"Просмотр",delete:"Удалить",action:"Действие",date:"Дата",status:"Статус",technician:"Назначенный мастер",note:"Примечание мастера",assigned:"Назначен",notAssigned:"Не назначен",noRecord:"Заявок пока нет.",repaired:"Неисправность устранена"},
+NL:{submit:"Aanvraag verzenden",sending:"Verzenden...",reset:"Wissen",language:"Voorkeurstaal",room:"Kamer-/appartementnummer",issueType:"Storingstype",appointment:"Beschikbare tijd",description:"Beschrijving van de storing",detailsPlaceholder:"Voer de details van de storing in...",photo:"Foto van de storing",choosePhoto:"Foto kiezen",noFile:"Geen bestand geselecteerd",location:"Locatie",recent:"Recente storingsmeldingen",receipt:"Storingsformulier",save:"Opslaan",done:"Gereed",print:"Afdrukken",close:"Sluiten",resend:"Melding opnieuw verzenden",view:"Bekijken",delete:"Verwijderen",action:"Actie",date:"Datum",status:"Status",technician:"Toegewezen technicus",note:"Notitie technicus",assigned:"Toegewezen",notAssigned:"Niet toegewezen",noRecord:"Nog geen storingsmeldingen.",repaired:"Storing verholpen"},
+FR:{submit:"Envoyer la demande",sending:"Envoi...",reset:"Effacer",language:"Langue préférée",room:"N° de chambre / appartement",issueType:"Type de panne",appointment:"Heure disponible",description:"Description de la panne",detailsPlaceholder:"Saisissez les détails de la panne...",photo:"Photo de la panne",choosePhoto:"Choisir une photo",noFile:"Aucun fichier sélectionné",location:"Emplacement",recent:"Dernières demandes de dépannage",receipt:"Fiche de signalement",save:"Enregistrer",done:"Terminé",print:"Imprimer",close:"Fermer",resend:"Renvoyer la demande",view:"Afficher",delete:"Supprimer",action:"Action",date:"Date",status:"Statut",technician:"Technicien affecté",note:"Note du technicien",assigned:"Affecté",notAssigned:"Non affecté",noRecord:"Aucune demande pour le moment.",repaired:"Panne réparée"},
+HI:{submit:"अनुरोध भेजें",sending:"भेजा जा रहा है...",reset:"साफ़ करें",language:"पसंदीदा भाषा",room:"कमरा / अपार्टमेंट नंबर",issueType:"खराबी का प्रकार",appointment:"उपलब्ध समय",description:"खराबी का विवरण",detailsPlaceholder:"खराबी का विवरण लिखें...",photo:"खराबी की फोटो",choosePhoto:"फोटो चुनें",noFile:"कोई फ़ाइल नहीं चुनी",location:"स्थान",recent:"हाल की खराबी रिपोर्ट",receipt:"खराबी रिपोर्ट रसीद",save:"सहेजें",done:"पूर्ण",print:"प्रिंट",close:"बंद करें",resend:"अनुरोध फिर से भेजें",view:"देखें",delete:"हटाएं",action:"कार्रवाई",date:"दिनांक",status:"स्थिति",technician:"नियुक्त तकनीशियन",note:"तकनीशियन नोट",assigned:"नियुक्त",notAssigned:"नियुक्त नहीं",noRecord:"अभी कोई खराबी रिकॉर्ड नहीं है।",repaired:"खराबी ठीक की गई"},
+AR:{submit:"إرسال الطلب",sending:"جارٍ الإرسال...",reset:"مسح",language:"اللغة المفضلة",room:"رقم الغرفة / الشقة",issueType:"نوع العطل",appointment:"الوقت المتاح",description:"وصف العطل",detailsPlaceholder:"اكتب تفاصيل العطل...",photo:"صورة العطل",choosePhoto:"اختيار صورة",noFile:"لم يتم اختيار ملف",location:"الموقع",recent:"آخر بلاغات الأعطال",receipt:"إيصال بلاغ العطل",save:"حفظ",done:"تم",print:"طباعة",close:"إغلاق",resend:"إرسال الطلب مرة أخرى",view:"عرض",delete:"حذف",action:"الإجراء",date:"التاريخ",status:"الحالة",technician:"الفني المعيّن",note:"ملاحظة الفني",assigned:"تم التعيين",notAssigned:"غير معيّن",noRecord:"لا توجد بلاغات أعطال حتى الآن.",repaired:"تم إصلاح العطل"},
+KU:{submit:"Daxwazê Bişîne",sending:"Tê şandin...",reset:"Paqij bike",language:"Zimanê Bijartî",room:"Hejmara Ode / Apartmanê",issueType:"Cureya Xesarê",appointment:"Dema Guncan",description:"Danasîna Xesarê",detailsPlaceholder:"Hûrguliyên xesarê binivîse...",photo:"Wêneyê Xesarê",choosePhoto:"Wêneyê Hilbijêre",noFile:"Dosya nehatiye hilbijartin",location:"Cih",recent:"Tomarên Xesarên Dawî",receipt:"Fîşa Ragihandina Xesarê",save:"Tomar bike",done:"Qediya",print:"Çap bike",close:"Bigire",resend:"Daxwazê Dîsa Bişîne",view:"Bibîne",delete:"Jê bibe",action:"Kar",date:"Dîrok",status:"Rewş",technician:"Usta Tayînkirî",note:"Nota Usta",assigned:"Hate tayînkirin",notAssigned:"Nehate tayînkirin",noRecord:"Hêj tomarên xesarê tune ne.",repaired:"Xesar hate çareserkirin"}
+};
+Object.keys(UI_ALL_LANGS).forEach(k=>{
+  if(!translations[k]) translations[k]={};
+  Object.assign(translations[k], UI_ALL_LANGS[k]);
+});
+function uiText(key){
+  const l=translations[currentLang]||translations.TR;
+  return l[key]||translations.TR[key]||key;
+}
+
+function sonKayitMetni(key) {
+  const lang = translations[currentLang] || translations.TR;
+  return lang[key] || translations.TR[key] || key;
+}
+
+function arizaTuruMetniGoster(tur) {
+  if (!tur) return "-";
+  const lang = translations[currentLang] || translations.TR;
+  const liste = lang.arizaTurleri || [];
+  const eslesen = liste.find(x => x && x.value === tur);
+  return eslesen && eslesen.text ? eslesen.text : tur;
+}
+
+function randevuMetniGoster(randevu) {
+  if (!randevu) return "-";
+  const lang = translations[currentLang] || translations.TR;
+  const liste = lang.randevuZamanlari || [];
+  if (randevu.startsWith("Özel Saat (")) {
+    const ozel = liste.find(x => x && x.value === "Özel Saat");
+    return (ozel ? ozel.text : "Özel Saat") + randevu.slice("Özel Saat".length);
+  }
+  const eslesen = liste.find(x => x && x.value === randevu);
+  return eslesen && eslesen.text ? eslesen.text : randevu;
+}
+
+
+function durumCssSinifi(durum) {
+  const d = String(durum || "").toLocaleLowerCase("tr-TR")
+    .replace(/ı/g,"i").replace(/ş/g,"s").replace(/ğ/g,"g")
+    .replace(/ü/g,"u").replace(/ö/g,"o").replace(/ç/g,"c");
+  if (d.includes("bekliyor") || d.includes("waiting") || d.includes("pending")) return "status-bekliyor";
+  if (d.includes("tamam") || d.includes("completed") || d.includes("done")) return "status-tamamlandi";
+  if (d.includes("atöly") || d.includes("atolye") || d.includes("tamirde") || d.includes("islemde") || d.includes("işlemde") ||
+      d.includes("repair") || d.includes("workshop") || d.includes("in-workshop")) return "status-tamirde";
+  return "";
+}
+
+function durumMetniGoster(durum) {
+  const l = (typeof currentLang !== "undefined" ? currentLang : "TR").toUpperCase();
+  const lang = durumDil[l] || durumDil.TR;
+  return lang[durum] || durum;
+}
+
+
+const odaHaritasi = { 
+"101": { blok: "A BLOK", yon: "SOL", kat: "ALT KAT" }, "102": { blok: "A BLOK", yon: "SAĞ", kat: "ALT KAT" }, "103": { blok: "A BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "104": { blok: "A BLOK", yon: "SOL", kat: "ÜST KAT" }, "106": { blok: "C BLOK", yon: "SOL", kat: "ALT KAT" }, "107": { blok: "C BLOK", yon: "ORTA", kat: "ALT KAT" }, "108": { blok: "C BLOK", yon: "SAĞ", kat: "ALT KAT" }, "109": { blok: "C BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "110": { blok: "C BLOK", yon: "SOL", kat: "ÜST KAT" }, "111": { blok: "D BLOK", yon: "SOL", kat: "ALT KAT" }, "112": { blok: "D BLOK", yon: "ORTA", kat: "ALT KAT" }, "113": { blok: "D BLOK", yon: "SAĞ", kat: "ALT KAT" }, "114": { blok: "D BLOK", yon: "SOL", kat: "ÜST KAT" }, "115": { blok: "D BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "116": { blok: "E BLOK", yon: "SOL", kat: "ALT KAT" }, "117": { blok: "E BLOK", yon: "SAĞ", kat: "ALT KAT" }, "118": { blok: "E BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "119": { blok: "E BLOK", yon: "SOL", kat: "ÜST KAT" }, "120": { blok: "F BLOK", yon: "SAĞ", kat: "ALT KAT" }, "121": { blok: "F BLOK", yon: "ORTA", kat: "ALT KAT" }, "122": { blok: "F BLOK", yon: "SOL", kat: "ALT KAT" }, "123": { blok: "F BLOK", yon: "SOL", kat: "ÜST KAT" }, "124": { blok: "F BLOK", yon: "ORTA", kat: "ÜST KAT" }, "125": { blok: "F BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "126": { blok: "G BLOK", yon: "SAĞ", kat: "ALT KAT" }, "127": { blok: "G BLOK", yon: "ORTA", kat: "ALT KAT" }, "128": { blok: "G BLOK", yon: "SOL", kat: "ALT KAT" }, "129": { blok: "G BLOK", yon: "SOL", kat: "ÜST KAT" }, "130": { blok: "G BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "131": { blok: "H BLOK", yon: "SAĞ", kat: "ALT KAT" }, "132": { blok: "H BLOK", yon: "ORTA", kat: "ALT KAT" }, "133": { blok: "H BLOK", yon: "SOL", kat: "ALT KAT" }, "134": { blok: "H BLOK", yon: "SOL", kat: "ÜST KAT" }, "135": { blok: "H BLOK", yon: "ORTA", kat: "ÜST KAT" }, "136": { blok: "H BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "137": { blok: "I BLOK", yon: "SAĞ", kat: "ALT KAT" }, "138": { blok: "I BLOK", yon: "ORTA", kat: "ALT KAT" }, "139": { blok: "I BLOK", yon: "SOL", kat: "ALT KAT" }, "140": { blok: "I BLOK", yon: "SOL", kat: "ÜST KAT" }, "141": { blok: "I BLOK", yon: "ORTA", kat: "ÜST KAT" }, "142": { blok: "I BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "143": { blok: "J BLOK", yon: "SAĞ", kat: "ALT KAT" }, "144": { blok: "J BLOK", yon: "ORTA", kat: "ALT KAT" }, "145": { blok: "J BLOK", yon: "SOL", kat: "ALT KAT" }, "146": { blok: "J BLOK", yon: "SOL", kat: "ÜST KAT" }, "147": { blok: "J BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "148": { blok: "K BLOK", yon: "SAĞ", kat: "ALT KAT" }, "149": { blok: "K BLOK", yon: "ORTA", kat: "ALT KAT" }, "150": { blok: "K BLOK", yon: "SOL", kat: "ALT KAT" }, "151": { blok: "K BLOK", yon: "SOL", kat: "ÜST KAT" }, "152": { blok: "K BLOK", yon: "ORTA", kat: "ÜST KAT" }, "153": { blok: "K BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "154": { blok: "L BLOK", yon: "SOL", kat: "ALT KAT" }, "155": { blok: "L BLOK", yon: "SOL", kat: "ÜST KAT" }, "156": { blok: "L BLOK", yon: "SAĞ", kat: "ALT KAT" }, "201": { blok: "A BLOK", yon: "SAĞ", kat: "ALT KAT" }, "202": { blok: "A BLOK", yon: "ORTA", kat: "ALT KAT" }, "203": { blok: "A BLOK", yon: "SOL", kat: "ALT KAT" }, "204": { blok: "A BLOK", yon: "SOL", kat: "ÜST KAT" }, "205": { blok: "A BLOK", yon: "ORTA", kat: "ÜST KAT" }, "206": { blok: "A BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "207": { blok: "B BLOK", yon: "SOL", kat: "ALT KAT" }, "208": { blok: "B BLOK", yon: "SAĞ", kat: "ALT KAT" }, "209": { blok: "B BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "210": { blok: "B BLOK", yon: "SOL", kat: "ÜST KAT" }, "211": { blok: "C BLOK", yon: "SOL", kat: "ALT KAT" }, "212": { blok: "C BLOK", yon: "ORTA", kat: "ALT KAT" }, "213": { blok: "C BLOK", yon: "SAĞ", kat: "ALT KAT" }, "214": { blok: "C BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "215": { blok: "C BLOK", yon: "SOL", kat: "ÜST KAT" }, "216": { blok: "D BLOK", yon: "SOL", kat: "ALT KAT" }, "217": { blok: "D BLOK", yon: "SAĞ", kat: "ALT KAT" }, "218": { blok: "D BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "219": { blok: "D BLOK", yon: "SOL", kat: "ÜST KAT" }, "220": { blok: "E BLOK", yon: "SOL", kat: "ALT KAT" }, "221": { blok: "E BLOK", yon: "ORTA", kat: "ALT KAT" }, "222": { blok: "E BLOK", yon: "SAĞ", kat: "ALT KAT" }, "223": { blok: "E BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "224": { blok: "E BLOK", yon: "ORTA", kat: "ÜST KAT" }, "225": { blok: "E BLOK", yon: "SOL", kat: "ÜST KAT" }, "301": { blok: "A BLOK", yon: "SOL", kat: "ALT KAT" }, "302": { blok: "A BLOK", yon: "SAĞ", kat: "ALT KAT" }, "303": { blok: "A BLOK", yon: "SOL", kat: "ÜST KAT" }, "304": { blok: "A BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "305": { blok: "B BLOK", yon: "SOL", kat: "ALT KAT" }, "306": { blok: "B BLOK", yon: "SAĞ", kat: "ALT KAT" }, "307": { blok: "B BLOK", yon: "SOL", kat: "ÜST KAT" }, "308": { blok: "B BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "309": { blok: "C BLOK", yon: "SOL", kat: "ALT KAT" }, "310": { blok: "C BLOK", yon: "SAĞ", kat: "ALT KAT" }, "311": { blok: "C BLOK", yon: "SOL", kat: "ÜST KAT" }, "312": { blok: "C BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "313": { blok: "D BLOK", yon: "SOL", kat: "ALT KAT" }, "314": { blok: "D BLOK", yon: "ORTA", kat: "ALT KAT" }, "315": { blok: "D BLOK", yon: "SAĞ", kat: "ALT KAT" }, "316": { blok: "D BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "317": { blok: "D BLOK", yon: "ORTA", kat: "ÜST KAT" }, "318": { blok: "D BLOK", yon: "SOL", kat: "ÜST KAT" }, "319": { blok: "E BLOK", yon: "SOL", kat: "ALT KAT" }, "320": { blok: "E BLOK", yon: "ORTA", kat: "ALT KAT" }, "321": { blok: "E BLOK", yon: "SAĞ", kat: "ALT KAT" }, "322": { blok: "E BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "323": { blok: "E BLOK", yon: "SOL", kat: "ÜST KAT" }, "324": { blok: "F BLOK", yon: "SOL", kat: "ALT KAT" }, "325": { blok: "F BLOK", yon: "ORTA", kat: "ALT KAT" }, "326": { blok: "F BLOK", yon: "SAĞ", kat: "ALT KAT" }, "327": { blok: "F BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "328": { blok: "F BLOK", yon: "ORTA", kat: "ÜST KAT" }, "329": { blok: "F BLOK", yon: "SOL", kat: "ÜST KAT" }, "330": { blok: "G BLOK", yon: "SOL", kat: "ALT KAT" }, "331": { blok: "G BLOK", yon: "ORTA", kat: "ALT KAT" }, "332": { blok: "G BLOK", yon: "SAĞ", kat: "ALT KAT" }, "333": { blok: "G BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "334": { blok: "G BLOK", yon: "ORTA", kat: "ÜST KAT" }, "335": { blok: "G BLOK", yon: "SOL", kat: "ÜST KAT" }, "336": { blok: "H BLOK", yon: "SOL", kat: "ALT KAT" }, "337": { blok: "H BLOK", yon: "ORTA", kat: "ALT KAT" }, "338": { blok: "H BLOK", yon: "SAĞ", kat: "ALT KAT" }, "339": { blok: "H BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "340": { blok: "H BLOK", yon: "SOL", kat: "ÜST KAT" }, "341": { blok: "I BLOK", yon: "SOL", kat: "ALT KAT" }, "342": { blok: "I BLOK", yon: "ORTA", kat: "ALT KAT" }, "343": { blok: "I BLOK", yon: "SAĞ", kat: "ALT KAT" }, "344": { blok: "I BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "345": { blok: "I BLOK", yon: "ORTA", kat: "ÜST KAT" }, "346": { blok: "I BLOK", yon: "SOL", kat: "ÜST KAT" }, "347": { blok: "J BLOK", yon: "SAĞ", kat: "ALT KAT" }, "348": { blok: "J BLOK", yon: "SOL", kat: "ALT KAT" }, "349": { blok: "J BLOK", yon: "SOL", kat: "ÜST KAT" }, "350": { blok: "J BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "401": { blok: "A BLOK", yon: "SAĞ", kat: "ALT KAT" }, "402": { blok: "A BLOK", yon: "SOL", kat: "ALT KAT" }, "403": { blok: "A BLOK", yon: "SOL", kat: "ÜST KAT" }, "404": { blok: "A BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "405": { blok: "B BLOK", yon: "SOL", kat: "ALT KAT" }, "406": { blok: "B BLOK", yon: "ORTA", kat: "ALT KAT" }, "407": { blok: "B BLOK", yon: "SAĞ", kat: "ALT KAT" }, "408": { blok: "B BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "409": { blok: "B BLOK", yon: "ORTA", kat: "ÜST KAT" }, "410": { blok: "B BLOK", yon: "SOL", kat: "ÜST KAT" }, "411": { blok: "C BLOK", yon: "SOL", kat: "ALT KAT" }, "412": { blok: "C BLOK", yon: "SAĞ", kat: "ALT KAT" }, "413": { blok: "C BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "414": { blok: "C BLOK", yon: "SOL", kat: "ÜST KAT" }, "415": { blok: "Ç BLOK", yon: "SOL", kat: "ALT KAT" }, "416": { blok: "Ç BLOK", yon: "SAĞ", kat: "ALT KAT" }, "417": { blok: "Ç BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "418": { blok: "Ç BLOK", yon: "SOL", kat: "ÜST KAT" }, "419": { blok: "D BLOK", yon: "SOL", kat: "ALT KAT" }, "420": { blok: "D BLOK", yon: "SAĞ", kat: "ALT KAT" }, "421": { blok: "D BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "422": { blok: "D BLOK", yon: "SOL", kat: "ÜST KAT" }, "423": { blok: "E BLOK", yon: "SAĞ", kat: "ALT KAT" }, "424": { blok: "E BLOK", yon: "ORTA", kat: "ALT KAT" }, "425": { blok: "E BLOK", yon: "SOL", kat: "ALT KAT" }, "426": { blok: "E BLOK", yon: "SOL", kat: "ÜST KAT" }, "427": { blok: "E BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "428": { blok: "F BLOK", yon: "SAĞ", kat: "ALT KAT" }, "429": { blok: "F BLOK", yon: "ORTA", kat: "ALT KAT" }, "430": { blok: "F BLOK", yon: "SOL", kat: "ALT KAT" }, "431": { blok: "F BLOK", yon: "SOL", kat: "ÜST KAT" }, "432": { blok: "F BLOK", yon: "ORTA", kat: "ÜST KAT" }, "433": { blok: "F BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "434": { blok: "G BLOK", yon: "SAĞ", kat: "ALT KAT" }, "435": { blok: "G BLOK", yon: "ORTA", kat: "ALT KAT" }, "436": { blok: "G BLOK", yon: "SOL", kat: "ALT KAT" }, "437": { blok: "G BLOK", yon: "SOL", kat: "ÜST KAT" }, "438": { blok: "G BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "439": { blok: "H BLOK", yon: "SAĞ", kat: "ALT KAT" }, "440": { blok: "H BLOK", yon: "ORTA", kat: "ALT KAT" }, "441": { blok: "H BLOK", yon: "SOL", kat: "ALT KAT" }, "442": { blok: "H BLOK", yon: "SOL", kat: "ÜST KAT" }, "443": { blok: "H BLOK", yon: "ORTA", kat: "ÜST KAT" }, "444": { blok: "H BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "445": { blok: "I BLOK", yon: "SAĞ", kat: "ALT KAT" }, "446": { blok: "I BLOK", yon: "ORTA", kat: "ALT KAT" }, "447": { blok: "I BLOK", yon: "SOL", kat: "ALT KAT" }, "448": { blok: "I BLOK", yon: "SOL", kat: "ÜST KAT" }, "449": { blok: "I BLOK", yon: "ORTA", kat: "ÜST KAT" }, "450": { blok: "I BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "451": { blok: "İ BLOK", yon: "SAĞ", kat: "ALT KAT" }, "452": { blok: "İ BLOK", yon: "ORTA", kat: "ALT KAT" }, "453": { blok: "İ BLOK", yon: "SOL", kat: "ALT KAT" }, "454": { blok: "İ BLOK", yon: "SOL", kat: "ÜST KAT" }, "455": { blok: "İ BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "456": { blok: "J BLOK", yon: "SAĞ", kat: "ALT KAT" }, "457": { blok: "J BLOK", yon: "ORTA", kat: "ALT KAT" }, "458": { blok: "J BLOK", yon: "SOL", kat: "ALT KAT" }, "459": { blok: "J BLOK", yon: "SOL", kat: "ÜST KAT" }, "460": { blok: "J BLOK", yon: "ORTA", kat: "ÜST KAT" }, "461": { blok: "J BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "462": { blok: "K BLOK", yon: "SAĞ", kat: "ALT KAT" }, "463": { blok: "K BLOK", yon: "ORTA", kat: "ALT KAT" }, "464": { blok: "K BLOK", yon: "SOL", kat: "ALT KAT" }, "465": { blok: "K BLOK", yon: "SOL", kat: "ÜST KAT" }, "466": { blok: "K BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "467": { blok: "L BLOK", yon: "SAĞ", kat: "ALT KAT" }, "468": { blok: "L BLOK", yon: "SOL", kat: "ALT KAT" }, "469": { blok: "L BLOK", yon: "SOL", kat: "ÜST KAT" }, "470": { blok: "L BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "471": { blok: "M BLOK", yon: "SOL", kat: "ALT KAT" }, "472": { blok: "M BLOK", yon: "ORTA", kat: "ALT KAT" }, "473": { blok: "M BLOK", yon: "SAĞ", kat: "ALT KAT" }, "474": { blok: "M BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "475": { blok: "M BLOK", yon: "ORTA", kat: "ÜST KAT" }, "476": { blok: "M BLOK", yon: "SOL", kat: "ÜST KAT" }, "477": { blok: "N BLOK", yon: "SOL", kat: "ALT KAT" }, "478": { blok: "N BLOK", yon: "ORTA", kat: "ALT KAT" }, "479": { blok: "N BLOK", yon: "SAĞ", kat: "ALT KAT" }, "480": { blok: "N BLOK", yon: "ORTA", kat: "ÜST KAT" }, "481": { blok: "O BLOK", yon: "SOL", kat: "ALT KAT" }, "482": { blok: "O BLOK", yon: "ORTA", kat: "ALT KAT" }, "483": { blok: "O BLOK", yon: "SAĞ", kat: "ALT KAT" }, "484": { blok: "O BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "485": { blok: "O BLOK", yon: "SOL", kat: "ÜST KAT" }, "486": { blok: "Ö BLOK", yon: "SOL", kat: "ALT KAT" }, "487": { blok: "Ö BLOK", yon: "", kat: "ALT KAT" }, "488": { blok: "Ö BLOK", yon: "SAĞ", kat: "ALT KAT" }, "489": { blok: "Ö BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "490": { blok: "Ö BLOK", yon: "ORTA", kat: "ÜST KAT" }, "491": { blok: "Ö BLOK", yon: "SOL", kat: "ÜST KAT" }, "492": { blok: "P BLOK", yon: "SOL", kat: "ALT KAT" }, "493": { blok: "P BLOK", yon: "ORTA", kat: "ALT KAT" }, "494": { blok: "P BLOK", yon: "SAĞ", kat: "ALT KAT" }, "495": { blok: "P BLOK", yon: "SAĞ", kat: "ÜST KAT" }, "496": { blok: "P BLOK", yon: "SOL", kat: "ÜST KAT" } 
+}; 
+
+const loginTranslations = {
+  TR:{title:"Marangoz Arıza Bildirimi",info:'Odanızdan arıza bildirmek için <b>oda numaranızı şifre olarak</b> girin.',lang:"🌐 Dil",phone:"📞 Ülke Alan Kodu + Telefon Numarası",phonePh:"Telefon numarası",room:"🏠 Oda / Daire Numarası",roomPh:"Oda numarası",button:"Devam Et",phoneErr:"Lütfen ülke alan kodunu ve telefon numaranızı girin.",roomErr:"Lütfen oda numaranızı girin.",notFound:"Oda numarası bulunamadı. Lütfen kontrol edin."},
+  EN:{title:"Carpentry Fault Report",info:'To report a fault from your room, enter your <b>room number as the password</b>.',lang:"🌐 Language",phone:"📞 Country Code + Phone Number",phonePh:"Phone number",room:"🏠 Room / Apartment Number",roomPh:"Room number",button:"Continue",phoneErr:"Please enter the country code and phone number.",roomErr:"Please enter your room number.",notFound:"Room number not found. Please check it."},
+  DE:{title:"Schreinerei-Störungsmeldung",info:'Geben Sie Ihre <b>Zimmernummer als Passwort</b> ein, um eine Störung zu melden.',lang:"🌐 Sprache",phone:"📞 Ländervorwahl + Telefonnummer",phonePh:"Telefonnummer",room:"🏠 Zimmer-/Wohnungsnummer",roomPh:"Zimmernummer",button:"Weiter",phoneErr:"Bitte Ländervorwahl und Telefonnummer eingeben.",roomErr:"Bitte Zimmernummer eingeben.",notFound:"Zimmernummer nicht gefunden. Bitte prüfen."},
+  RU:{title:"Сообщение о неисправности",info:'Для сообщения о неисправности введите <b>номер комнаты как пароль</b>.',lang:"🌐 Язык",phone:"📞 Код страны + номер телефона",phonePh:"Номер телефона",room:"🏠 Номер комнаты / апартаментов",roomPh:"Номер комнаты",button:"Продолжить",phoneErr:"Введите код страны и номер телефона.",roomErr:"Введите номер комнаты.",notFound:"Номер комнаты не найден. Проверьте данные."},
+  NL:{title:"Melding timmerwerkstoring",info:'Voer uw <b>kamernummer als wachtwoord</b> in om een storing te melden.',lang:"🌐 Taal",phone:"📞 Landcode + telefoonnummer",phonePh:"Telefoonnummer",room:"🏠 Kamer-/appartementsnummer",roomPh:"Kamernummer",button:"Doorgaan",phoneErr:"Voer landcode en telefoonnummer in.",roomErr:"Voer uw kamernummer in.",notFound:"Kamernummer niet gevonden. Controleer het."},
+  FR:{title:"Signalement d'une panne de menuiserie",info:'Pour signaler une panne, saisissez votre <b>numéro de chambre comme mot de passe</b>.',lang:"🌐 Langue",phone:"📞 Indicatif pays + numéro de téléphone",phonePh:"Numéro de téléphone",room:"🏠 Numéro de chambre / appartement",roomPh:"Numéro de chambre",button:"Continuer",phoneErr:"Veuillez saisir l'indicatif et le numéro de téléphone.",roomErr:"Veuillez saisir votre numéro de chambre.",notFound:"Numéro de chambre introuvable. Vérifiez-le."},
+  HI:{title:"बढ़ई की खराबी की सूचना",info:'खराबी बताने के लिए अपना <b>कमरे का नंबर पासवर्ड के रूप में</b> दर्ज करें।',lang:"🌐 भाषा",phone:"📞 देश कोड + फ़ोन नंबर",phonePh:"फ़ोन नंबर",room:"🏠 कमरा / अपार्टमेंट नंबर",roomPh:"कमरे का नंबर",button:"जारी रखें",phoneErr:"कृपया देश कोड और फ़ोन नंबर दर्ज करें।",roomErr:"कृपया कमरे का नंबर दर्ज करें।",notFound:"कमरे का नंबर नहीं मिला।"},
+  AR:{title:"بلاغ عطل النجارة",info:'للإبلاغ عن عطل، أدخل <b>رقم الغرفة ككلمة مرور</b>.',lang:"🌐 اللغة",phone:"📞 رمز الدولة + رقم الهاتف",phonePh:"رقم الهاتف",room:"🏠 رقم الغرفة / الشقة",roomPh:"رقم الغرفة",button:"متابعة",phoneErr:"يرجى إدخال رمز الدولة ورقم الهاتف.",roomErr:"يرجى إدخال رقم الغرفة.",notFound:"لم يتم العثور على رقم الغرفة. يرجى التحقق."}
+};
+function loginLanguageChanged(langCode){
+  currentLang = langCode || "TR";
+  const t=loginTranslations[currentLang]||loginTranslations.TR;
+  const set=(id,val,htmlMode=false)=>{const el=document.getElementById(id);if(el) htmlMode?el.innerHTML=val:el.innerText=val;};
+  set("loginTitle",t.title); set("loginInfo",t.info,true); set("loginContinueBtn",t.button);
+  const labels=document.querySelectorAll("#roomLoginOverlay .room-login-label");
+  if(labels[0]) labels[0].innerText=t.lang;
+  if(labels[1]) labels[1].innerText=t.phone;
+  if(labels[2]) labels[2].innerText=t.room;
+  const ph=document.getElementById("guestPhone"); if(ph) ph.placeholder=t.phonePh;
+  const rp=document.getElementById("roomPassword"); if(rp) rp.placeholder=t.roomPh;
+  const ls=document.getElementById("langSelect"); if(ls) ls.value=currentLang;
+  try{ sessionStorage.setItem("misafirDil",currentLang); }catch(e){}
+}
+function getLoginPhone(){
+  const code=(document.getElementById("countryCode")?.value||"").replace(/\D/g,"");
+  const num=(document.getElementById("guestPhone")?.value||"").replace(/\D/g,"");
+  return code && num ? "+"+code+num : "";
+}
+function restoreLoginFields(){
+  try{
+    const savedLang=sessionStorage.getItem("misafirDil");
+    const savedPhone=sessionStorage.getItem("misafirTelefon");
+    const savedCode=sessionStorage.getItem("misafirUlkeKodu");
+    if(savedLang){const el=document.getElementById("loginLang");if(el)el.value=savedLang;loginLanguageChanged(savedLang);}
+    if(savedPhone){
+      const m=savedPhone.replace(/\D/g,"");
+      const codes=[...document.querySelectorAll("#countryCode option")].map(o=>o.value.replace(/\D/g,"")).sort((a,b)=>b.length-a.length);
+      const match=codes.find(c=>m.startsWith(c));
+      if(match){document.getElementById("countryCode").value="+"+match;document.getElementById("guestPhone").value=m.slice(match.length);}
+      else if(savedCode){document.getElementById("countryCode").value=savedCode;document.getElementById("guestPhone").value=m;}
+    }
+  }catch(e){}
+}
+function odaGirisYap() {
+  const oda = document.getElementById("roomPassword").value.trim();
+  const phone = getLoginPhone();
+  const error = document.getElementById("roomLoginError");
+  const t = loginTranslations[currentLang] || loginTranslations.TR;
+  error.innerText = "";
+  if (!phone) { error.innerText = t.phoneErr; return; }
+  if (!oda) { error.innerText = t.roomErr; return; }
+  if (!odaHaritasi[oda]) { error.innerText = t.notFound; return; }
+
+  sessionStorage.setItem("misafirOda", oda);
+  sessionStorage.setItem("misafirTelefon", phone);
+  sessionStorage.setItem("misafirUlkeKodu", document.getElementById("countryCode").value);
+  sessionStorage.setItem("misafirDil", currentLang);
+
+  document.getElementById("odaNo").value = oda;
+  const mainPhone=document.getElementById("misafirTelefon");
+  if(mainPhone) mainPhone.value=phone;
+  const mainLang=document.getElementById("langSelect");
+  if(mainLang) mainLang.value=currentLang;
+
+  document.getElementById("roomLoginOverlay").style.display = "none";
+  document.getElementById("guestApp").style.display = "block";
+  changeLanguage(currentLang);
+  konumBilgisiGetir();
+  sonKayitlariYukle();
+  odaArizaGecmisiniYukle();
+}
+
+function misafirOturumunuBaslat() {
+  const oda = sessionStorage.getItem("misafirOda");
+  const phone = sessionStorage.getItem("misafirTelefon");
+  const lang = sessionStorage.getItem("misafirDil") || "TR";
+  if (oda && phone && odaHaritasi[oda]) {
+    currentLang=lang;
+    document.getElementById("odaNo").value = oda;
+    const mainPhone=document.getElementById("misafirTelefon");
+    if(mainPhone) mainPhone.value=phone;
+    document.getElementById("langSelect").value=currentLang;
+    document.getElementById("roomLoginOverlay").style.display = "none";
+    document.getElementById("guestApp").style.display = "block";
+    changeLanguage(currentLang);
+    konumBilgisiGetir();
+  }
+}
+
+function changeLanguage(langCode) { 
+currentLang = langCode; 
+updateLanguageUI(); 
+} 
+
+function updateLanguageUI() { 
+const lang = translations[currentLang] || translations["TR"]; 
+document.getElementById("txtFormTitle").innerText = lang.formTitle;
+const dahiliEl = document.getElementById("txtDahiliTel");
+if (dahiliEl) dahiliEl.innerHTML = internalTelTranslations[currentLang] || internalTelTranslations.TR; 
+document.getElementById("lblArizaTuru").innerHTML = lang.lblArizaTuru; 
+document.getElementById("lblRandevuZamani").innerHTML = lang.lblRandevuZamani; 
+document.getElementById("lblFotograf").innerHTML = lang.lblFotograf;
+document.getElementById("btnCustomFile").innerText = lang.btnFile; 
+const fileInput = document.getElementById("fotograf"); 
+if (fileInput.files.length === 0) { 
+document.getElementById("fileNameDisplay").innerText = lang.noFile; 
+} 
+document.getElementById("lblCustomTime").innerText = lang.lblCustomTime; 
+document.getElementById("customTime").placeholder = lang.customTimePh; 
+document.getElementById("lblAciklama").innerHTML = lang.lblAciklama; 
+document.getElementById("aciklama").placeholder = lang.aciklamaPlaceholder;
+if (document.getElementById("aciklamaOrnek")) document.getElementById("aciklamaOrnek").innerText = lang.aciklamaPlaceholder; 
+document.getElementById("btnSubmit").innerText = lang.btnSubmit; 
+document.getElementById("txtRecordsTitle").innerText = lang.recordsTitle; 
+document.getElementById("thOda").innerText = lang.thOda; 
+document.getElementById("thTur").innerText = lang.thTur; 
+document.getElementById("thDurum").innerText = lang.thDurum;
+const thIslem = document.getElementById("thIslem");
+if (thIslem) {
+  const actionLang = translations[currentLang] || translations.TR;
+  thIslem.innerText = actionLang.action || translations.TR.action;
+} 
+
+const arizaSelect = document.getElementById("arizaTuru"); 
+const currentArizaVal = arizaSelect.value; 
+arizaSelect.innerHTML = ""; 
+lang.arizaTurleri.forEach(item => { 
+const opt = document.createElement("option"); 
+opt.value = item.value; 
+opt.innerText = item.text; 
+arizaSelect.appendChild(opt); 
+}); 
+arizaSelect.value = currentArizaVal; 
+
+const randevuSelect = document.getElementById("randevuZamani"); 
+const currentRandevuVal = randevuSelect.value; 
+randevuSelect.innerHTML = ""; 
+lang.randevuZamanlari.forEach(item => { 
+const opt = document.createElement("option"); 
+opt.value = item.value; 
+opt.innerText = item.text; 
+randevuSelect.appendChild(opt); 
+}); 
+randevuSelect.value = currentRandevuVal; 
+konumBilgisiGetir();
+sonKayitlariYukle();
+} 
+
+function toggleCustomTime() { 
+const randevuSelect = document.getElementById("randevuZamani"); 
+const customTimeGroup = document.getElementById("customTimeGroup"); 
+const customTimeInput = document.getElementById("customTime"); 
+if (randevuSelect.value === "Özel Saat") { 
+customTimeGroup.style.display = "block"; 
+customTimeInput.setAttribute("required", "true"); 
+} else { 
+customTimeGroup.style.display = "none"; 
+customTimeInput.removeAttribute("required"); 
+customTimeInput.value = ""; 
+} 
+} 
+
+function updateFileName() { 
+const fileInput = document.getElementById("fotograf"); 
+const display = document.getElementById("fileNameDisplay"); 
+const lang = translations[currentLang] || translations["TR"]; 
+if (fileInput.files.length > 0) { 
+display.innerText = fileInput.files[0].name; 
+} else { 
+display.innerText = lang.noFile; 
+} 
+} 
+
+function konumBilgisiGetir() { 
+const odaInput = document.getElementById("odaNo").value.trim(); 
+const previewSpan = document.getElementById("locationPreview"); 
+const lang = translations[currentLang] || translations["TR"]; 
+if (odaHaritasi[odaInput]) { 
+const info = odaHaritasi[odaInput]; 
+let blokText = info.blok; 
+if(currentLang !== "TR") { 
+blokText = blokText.replace("BLOK", lang.blockText); 
+} 
+let yonText = info.yon; 
+if(yonText === "SOL") yonText = lang.leftText; 
+else if(yonText === "SAĞ") yonText = lang.rightText; 
+else if(yonText === "ORTA") yonText = lang.centerText; 
+let katText = info.kat; 
+if(katText === "ALT KAT") katText = lang.lowerFloor; 
+else if(katText === "ÜST KAT") katText = lang.upperFloor; 
+const yonMetni = yonText ? ` - ${yonText}` : ''; 
+previewSpan.innerText = `📍 ${blokText}${yonMetni} (${katText})`; 
+} else if (odaInput.length >= 3) { 
+previewSpan.innerText = lang.notFoundBlock; 
+} else { 
+previewSpan.innerText = ""; 
+} 
+} 
+
+
+async function turkceyeCevir(metin) {
+  if (!metin || currentLang === "TR") return metin;
+  try {
+    const langMap = {
+      EN:"en", DE:"de", RU:"ru", NL:"nl", FR:"fr", HI:"hi", AR:"ar", KU:"ku"
+    };
+    const source = langMap[currentLang] || "en";
+    const url = "https://api.mymemory.translated.net/get?q=" +
+      encodeURIComponent(metin) + "&langpair=" + source + "|tr";
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Çeviri servisi yanıt vermedi");
+    const data = await response.json();
+    const translated = data && data.responseData && data.responseData.translatedText;
+    return translated || metin;
+  } catch (e) {
+    console.warn("Türkçe çeviri yapılamadı:", e);
+    return metin;
+  }
+}
+
+async function formGonder(event) { 
+event.preventDefault(); 
+const lang = translations[currentLang] || translations["TR"]; 
+const btn = document.getElementById("btnSubmit"); 
+const photoInput = document.getElementById("fotograf");
+const photoFile = photoInput.files && photoInput.files.length > 0 ? photoInput.files[0] : null;
+
+// Fotoğraf olmadan hiçbir kayıt/bildirim işlemi başlatma.
+if (!photoFile) {
+  alert("📸 Lütfen arızanın fotoğrafını çekin / yükleyin.");
+  return;
+}
+
+btn.disabled = true; 
+btn.innerText = lang.btnSending; 
+
+const oda = document.getElementById("odaNo").value.trim(); 
+const tur = document.getElementById("arizaTuru").value; 
+let randevu = document.getElementById("randevuZamani").value; 
+const customTime = document.getElementById("customTime").value.trim(); 
+const aciklama = document.getElementById("aciklama").value.trim();
+const aciklamaTurkce = await turkceyeCevir(aciklama);
+
+// Fotoğrafı Firebase kaydına da ekle; yönetici panelindeki arıza fişi bunu kullanır.
+// Fotoğrafı küçültüp sıkıştır: Firebase kaydı ve Telegram gönderimi çok daha hızlı olur.
+const sikistirilmisFoto = await new Promise((resolve, reject) => {
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = () => {
+    img.onload = () => {
+      const MAX = 1280;
+      let w = img.naturalWidth || img.width;
+      let h = img.naturalHeight || img.height;
+      if (w > MAX || h > MAX) {
+        const oran = Math.min(MAX / w, MAX / h);
+        w = Math.round(w * oran);
+        h = Math.round(h * oran);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => {
+        if (!blob) return reject(new Error('Fotoğraf sıkıştırılamadı.'));
+        resolve(blob);
+      }, 'image/jpeg', 0.72);
+    };
+    img.onerror = () => reject(new Error('Fotoğraf okunamadı.'));
+    img.src = reader.result;
+  };
+  reader.onerror = reject;
+  reader.readAsDataURL(photoFile);
+});
+
+const fotoData = await new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = reject;
+  reader.readAsDataURL(sikistirilmisFoto);
+});
+
+if (randevu === "Özel Saat" && customTime) { 
+randevu = `Özel Saat (${customTime})`; 
+} 
+
+let konumDetay = "Genel Alan"; 
+if (odaHaritasi[oda]) { 
+const info = odaHaritasi[oda]; 
+const yonMetni = info.yon ? ` - ${info.yon}` : ''; 
+konumDetay = `${info.blok}${yonMetni} (${info.kat})`; 
+} 
+
+const yeniKayit = { 
+oda: oda, 
+konumDetay: konumDetay, 
+tur: tur, 
+randevu: randevu, 
+aciklama: aciklama, 
+foto: fotoData,
+durum: "Bekliyor",
+arizaNo: "ARZ-" + Date.now().toString().slice(-8),
+dil: currentLang,
+tarih: Date.now() 
+,
+      telefon: sessionStorage.getItem("misafirTelefon") || getLoginPhone() || ""
+    }; 
+
+try { 
+// Firebase ve Telegram'ı aynı anda başlatıyoruz; biri diğerini beklemez.
+const firebasePromise = db.ref("arizalar").push(yeniKayit); 
+
+// 1. TELEGRAM BİLDİRİMİ
+const telegramMetin = `🛠 *YENİ MARANGOZ ARIZA BİLDİRİMİ*\n\n` + 
+`📍 *Oda/Daire:* ${oda}\n` + 
+`🏢 *Konum:* ${konumDetay}\n` + 
+`🆔 *Arıza No:* ${yeniKayit.arizaNo}\n` +
+`🔧 *Arıza:* ${tur}\n` + 
+`⏰ *Zaman:* ${randevu}\n` + 
+`📝 *Açıklama:* ${aciklamaTurkce}\n` + 
+`🌐 *Dil:* ${currentLang}\n` + 
+`⏱ *Tarih:* ${new Date().toLocaleString('tr-TR')}`; 
+
+const formData = new FormData();
+formData.append("chat_id", TELEGRAM_GROUP_ID);
+formData.append("caption", telegramMetin);
+formData.append("parse_mode", "Markdown");
+formData.append("photo", sikistirilmisFoto, "ariza.jpg");
+// content:// gibi yerel HTML sayfalarında Telegram yanıtı CORS nedeniyle okunamayabilir.
+// İstek yine Telegram'a ulaşır; yanıtı okumaya çalışmak ise yanlışlıkla "hata" gösterebilir.
+const telegramPromise = fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+  method: "POST",
+  body: formData,
+  mode: "no-cors"
+}).then(() => ({ ok: true, corsOpaque: true })).catch(error => {
+  console.error("Telegram grup gönderim hatası:", error);
+  throw error;
+});
+
+// Telegram gönderimi başarılı olduğunda formu sonsuza kadar "Gönderiliyor..." durumunda bırakma.
+// Firebase bazen ağ/bağlantı nedeniyle uzun süre pending kalabiliyor.
+// Bu yüzden Firebase için güvenli bir zaman aşımı kullanıyoruz; kayıt işlemi arka planda devam edebilir.
+const timeoutPromise = (ms, fallback = false) =>
+  new Promise(resolve => setTimeout(() => resolve(fallback), ms));
+
+const [firebaseOk, telegramOk] = await Promise.all([
+  Promise.race([
+    firebasePromise.then(() => true).catch(err => {
+      console.error("Firebase arıza kayıt hatası:", err);
+      return false;
+    }),
+    timeoutPromise(8000, false)
+  ]),
+  Promise.race([
+    telegramPromise.then(() => true).catch(err => {
+      console.error("Telegram grup bildirim hatası:", err);
+      return false;
+    }),
+    timeoutPromise(8000, false)
+  ])
+]);
+
+if (!telegramOk) {
+  // Telegram isteği tarayıcı tarafından CORS nedeniyle okunamamış olabilir.
+  // Kullanıcıyı yanlışlıkla hata ekranında bırakmamak için burada işlemi başarısız sayma.
+  console.warn("Telegram yanıtı tarayıcı tarafından doğrulanamadı; istek gönderilmiş olabilir.");
+}
+
+if (!firebaseOk) {
+  console.warn("Firebase kaydı henüz tamamlanmadı; form kullanıcıyı bekletmeden devam ediyor.");
+}
+
+// 2. EMAILJS İLE E-POSTA BİLDİRİMİ (Hotmail/Outlook Gönderimi)
+const emailParams = {
+ oda_no: oda,
+ konum_detay: konumDetay,
+ ariza_turu: tur,
+ randevu_zamani: randevu,
+ aciklama: aciklamaTurkce,
+ aciklama_orijinal: aciklama,
+ dil: currentLang,
+ tarih: new Date().toLocaleString('tr-TR')
+};
+
+// 'YOUR_SERVICE_ID' ve 'YOUR_TEMPLATE_ID' alanlarını EmailJS panelinizdeki değerlerle değiştirin.
+emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", emailParams)
+ .then(() => {
+   console.log("E-posta başarıyla gönderildi.");
+ }, (err) => {
+   console.error("E-posta gönderim hatası:", err);
+ });
+
+alert(lang.successMsg);
+    setTimeout(() => fisGoster(yeniKayit), 150); 
+document.getElementById("arizaForm").reset(); 
+document.getElementById("fileNameDisplay").innerText = lang.noFile; 
+document.getElementById("customTimeGroup").style.display = "none"; 
+document.getElementById("locationPreview").innerText = ""; 
+} catch (error) { 
+console.error("Gönderim hatası:", error); 
+alert(lang.errorMsg); 
+} finally { 
+btn.disabled = false; 
+btn.innerText = lang.btnSubmit; 
+} 
+} 
+
+function sonKayitlariYukle() {
+  const oda = sessionStorage.getItem("misafirOda");
+  if (!oda) return;
+
+  db.ref("arizalar").orderByChild("oda").equalTo(oda).limitToLast(5).on("value", (snapshot) => {
+    const tbody = document.getElementById("sonKayitlarBody");
+    if (!tbody) return;
+
+    const lang = translations[currentLang] || translations.TR;
+
+    const thOda = document.getElementById("thOda");
+    const thTur = document.getElementById("thTur");
+    const thDurum = document.getElementById("thDurum");
+    const thIslem = document.getElementById("thIslem");
+
+    if (thOda) thOda.innerText = lang.room || "Oda";
+    if (thTur) thTur.innerText = lang.type || "Arıza Türü";
+    if (thDurum) thDurum.innerText = lang.status || "Durum";
+    if (thIslem) thIslem.innerText = lang.action || "İşlem";
+
+    tbody.innerHTML = "";
+
+    if (!snapshot.exists()) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">${lang.noRecord || "Henüz arıza kaydı bulunmuyor."}</td></tr>`;
+      return;
+    }
+
+    const veriler = [];
+    snapshot.forEach(child => {
+      veriler.unshift({ ...child.val(), key: child.key });
+    });
+
+    veriler.forEach(item => {
+      const durum = item.durum || "Bekliyor";
+      const durumGosterim = durumMetniGoster(durum);
+
+      const durumClass = durum.toLowerCase()
+        .replace(/ğ/g,"g").replace(/ı/g,"i").replace(/ö/g,"o")
+        .replace(/ü/g,"u").replace(/ş/g,"s").replace(/ç/g,"c")
+        .replace(/\s+/g,"-");
+
+      const turGosterim = arizaTuruMetniGoster(item.tur) || lang.type || "Arıza";
+      const odaGosterim = item.oda || "-";
+
+      const row = document.createElement("tr");
+      row.className = durumCssSinifi(durum);
+      row.innerHTML = `
+        <td>${odaGosterim}</td>
+        <td>${turGosterim}</td>
+        <td><span class="status-badge status-${durumClass}">${durumGosterim}</span></td>
+        <td class="record-action-cell">
+          <button type="button" class="btn-repeat" aria-label="${lang.resend || "Bildirimi Tekrar Gönder"}" onclick="tekrarGonder('${item.key}')">
+            🔄 ${lang.resend || "Bildirimi Tekrar Gönder"}
+          </button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  });
+}
+
+function tekrarGonderMetni(){
+  const l = (typeof currentLang !== "undefined" ? currentLang : "TR").toUpperCase();
+  const lang = translations[l] || translations.TR;
+  return lang.repeatSend || translations.TR.repeatSend;
+}
+
+window.tekrarGonder = async function(key){
+  const l = (typeof currentLang !== "undefined" ? currentLang : "TR").toUpperCase();
+  const lang = translations[l] || translations.TR;
+
+  try {
+    const snap = await db.ref("arizalar/" + key).once("value");
+    if(!snap.exists()){
+      alert(lang.notFound || translations.TR.notFound);
+      return;
+    }
+
+    const eski = snap.val();
+
+    // Kullanıcıdan tekrar form doldurması, fotoğraf seçmesi veya başka
+    // bir işlem yapması istenmez. Aynı arıza bilgileriyle yeni bir bildirim oluşturulur.
+    const yeniKayit = {
+      oda: eski.oda || "",
+      konumDetay: eski.konumDetay || "Genel Alan",
+      tur: eski.tur || "",
+      randevu: eski.randevu || "",
+      aciklama: eski.aciklama || "",
+      durum: "Bekliyor",
+      arizaNo: "ARZ-" + Date.now().toString().slice(-8),
+      dil: currentLang,
+      tekrarGonderildi: true,
+      kaynakArizaNo: eski.arizaNo || "",
+      kaynakKayitKey: key,
+      tarih: Date.now()
+    };
+
+    // 1. Yeni arıza kaydı oluştur.
+    await db.ref("arizalar").push(yeniKayit);
+
+    // 2. Telegram'a aynı arıza bilgilerini yeniden gönder.
+    // Eski kayıtların fotoğrafı Firebase'e dosya olarak kaydedilmediği için
+    // burada bildirim metin olarak gönderilir.
+    const telegramMetin =
+      `🔄 *TEKRAR GÖNDERİLEN MARANGOZ ARIZA BİLDİRİMİ*\n\n` +
+      `📍 *Oda/Daire:* ${yeniKayit.oda}\n` +
+      `🏢 *Konum:* ${yeniKayit.konumDetay}\n` +
+      `🆔 *Yeni Arıza No:* ${yeniKayit.arizaNo}\n` +
+      `🔁 *Önceki Arıza No:* ${yeniKayit.kaynakArizaNo || "-"}\n` +
+      `🔧 *Arıza:* ${yeniKayit.tur}\n` +
+      `⏰ *Zaman:* ${yeniKayit.randevu}\n` +
+      `📝 *Açıklama:* ${await turkceyeCevir(yeniKayit.aciklama)}\n` +
+      `🌐 *Dil:* ${currentLang}\n` +
+      `⏱ *Tarih:* ${new Date().toLocaleString('tr-TR')}`;
+
+    const tekrarTelegramResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        chat_id:TELEGRAM_GROUP_ID,
+        text:telegramMetin,
+        parse_mode:"Markdown"
+      })
+    });
+    const tekrarTelegramResult = await tekrarTelegramResponse.json();
+    if (!tekrarTelegramResult.ok) {
+      console.error("Telegram grup tekrar gönderim hatası:", tekrarTelegramResult);
+      throw new Error("Telegram grubuna gönderilemedi: " + (tekrarTelegramResult.description || "Bilinmeyen hata"));
+    }
+
+    // 3. E-posta bildirimi.
+    if (typeof emailjs !== "undefined") {
+      const emailParams = {
+        oda_no: yeniKayit.oda,
+        konum_detay: yeniKayit.konumDetay,
+        ariza_turu: yeniKayit.tur,
+        randevu_zamani: yeniKayit.randevu,
+        aciklama: yeniKayit.aciklama,
+        aciklama_orijinal: yeniKayit.aciklama,
+        dil: currentLang,
+        tarih: new Date().toLocaleString('tr-TR'),
+        tekrar_gonderildi: "Evet",
+        kaynak_ariza_no: yeniKayit.kaynakArizaNo || ""
+      };
+
+      emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", emailParams)
+        .catch(err => console.error("Tekrar gönderim e-posta hatası:", err));
+    }
+
+    // Seçilen dilde başarı mesajı.
+    const basari = {
+      TR:"✅ Aynı arıza başarıyla tekrar gönderildi.",
+      EN:"✅ The same fault was successfully sent again.",
+      DE:"✅ Dieselbe Störung wurde erfolgreich erneut gesendet.",
+      RU:"✅ Та же неисправность успешно отправлена повторно.",
+      NL:"✅ Dezelfde storing is opnieuw verzonden.",
+      FR:"✅ La même panne a été renvoyée avec succès.",
+      HI:"✅ वही खराबी सफलतापूर्वक फिर से भेज दी गई।",
+      AR:"✅ تم إرسال نفس العطل مرة أخرى بنجاح.",
+      KU:"✅ He همان xesar bi serkeftî dîsa hate şandin."
+    };
+
+    alert(basari[l] || basari.TR);
+    sonKayitlariYukle();
+
+  } catch(e) {
+    console.error("Tekrar gönderme hatası:", e);
+    alert(lang.resendError || translations.TR.resendError);
+  }
+};
+
+function odaArizaGecmisiniYukle() {
+  const oda = sessionStorage.getItem("misafirOda");
+  const box = document.getElementById("odaArizaGecmisi");
+  if (!oda || !box) return;
+  db.ref("arizalar").orderByChild("oda").equalTo(oda).limitToLast(20).on("value", snapshot => {
+    box.innerHTML = "";
+    if (!snapshot.exists()) {
+      box.innerHTML = `<div class="history-card">Henüz bu oda/daire için kayıt bulunmuyor.</div>`;
+      return;
+    }
+    const items = [];
+    snapshot.forEach(child => items.unshift({ ...child.val(), key: child.key }));
+    items.forEach(item => {
+      const durum = item.durum || "Bekliyor";
+      const durumClass = durum.toLowerCase().replace(/ğ/g,"g").replace(/ı/g,"i").replace(/ö/g,"o").replace(/ü/g,"u").replace(/ş/g,"s").replace(/ç/g,"c").replace(/\s+/g,"-");
+        const card = document.createElement("div");
+      card.className = "history-card";
+      card.innerHTML = `
+        <div class="history-top">
+          <span class="history-type">${arizaTuruMetniGoster(item.tur) || "Arıza"}</span>
+          <span><span class="status-badge status-${durumClass}">${durum}</span></span>
+        </div>
+        <div class="record-meta">🆔 ${item.arizaNo || "-"} · 📅 ${item.tarih ? new Date(item.tarih).toLocaleString("tr-TR") : "-"}</div>
+        <div class="history-desc">${item.aciklama || "Açıklama yok"}</div>`;
+      box.appendChild(card);
+    });
+  });
+}
+
+
+updateLanguageUI();
+telegramGrupKontrolu();
+misafirOturumunuBaslat();
+
+aciklamaDiliniGuncelle(currentLang);
+</script> 
+</div>
+</div> 
+
+<div id="fisModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;padding:20px;overflow:auto;">
+  <div id="fisIcerik" style="max-width:520px;margin:30px auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 10px 40px rgba(0,0,0,.2);">
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-size:34px;">🎫</div>
+      <h2 id="fisBaslik" style="margin:5px 0;">Arıza Bildirim Fişi</h2>
+      <div id="fisBasari" style="color:#16a34a;font-weight:600;">Arızanız başarıyla bildirildi.</div>
+    </div>
+    <div id="fisDetay"></div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button type="button" onclick="fisKaydet()" style="flex:1;padding:12px;border:0;border-radius:10px;background:#0f172a;color:#fff;font-weight:700;">
+        💾 <span id="fisKaydetText">Kaydet</span>
+      </button>
+      <button type="button" onclick="kapatFis()" style="flex:1;padding:12px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;font-weight:700;">
+        ✓ <span id="fisTamamText">Tamam</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  const fisDilleri = {
+  TR:{ticket:"Arıza Bildirim Fişi",success:"Arızanız başarıyla bildirildi.",save:"Kaydet",done:"Tamam",room:"Oda",type:"Arıza Türü",time:"Uygun Zaman",description:"Açıklama",date:"Tarih",number:"Arıza No"},
+  EN:{ticket:"Fault Report Receipt",success:"Your fault has been reported successfully.",save:"Save",done:"Done",room:"Room",type:"Fault Type",time:"Available Time",description:"Description",date:"Date",number:"Fault No."},
+  DE:{ticket:"Störungsmeldungsbeleg",success:"Ihre Störungsmeldung wurde erfolgreich übermittelt.",save:"Speichern",done:"Fertig",room:"Zimmer",type:"Störungsart",time:"Verfügbare Zeit",description:"Beschreibung",date:"Datum",number:"Störungs-Nr."},
+  RU:{ticket:"Квитанция о заявке",success:"Заявка на ремонт успешно отправлена.",save:"Сохранить",done:"Готово",room:"Комната",type:"Тип неисправности",time:"Удобное время",description:"Описание",date:"Дата",number:"Номер заявки"},
+  NL:{ticket:"Storingsbewijs",success:"Uw storing is succesvol gemeld.",save:"Opslaan",done:"Klaar",room:"Kamer",type:"Type storing",time:"Geschikte tijd",description:"Beschrijving",date:"Datum",number:"Storingsnummer"},
+  FR:{ticket:"Reçu de demande de réparation",success:"Votre demande a été envoyée avec succès.",save:"Enregistrer",done:"Terminé",room:"Chambre",type:"Type de problème",time:"Heure souhaitée",description:"Description",date:"Date",number:"N° de demande"},
+  HI:{ticket:"मरम्मत अनुरोध रसीद",success:"आपकी मरम्मत सूचना सफलतापूर्वक भेज दी गई है।",save:"सहेजें",done:"ठीक है",room:"कमरा",type:"समस्या का प्रकार",time:"उपयुक्त समय",description:"विवरण",date:"तारीख",number:"अनुरोध संख्या"},
+  AR:{ticket:"إيصال طلب الصيانة",success:"تم إرسال طلب الصيانة بنجاح.",save:"حفظ",done:"تم",room:"الغرفة",type:"نوع العطل",time:"الوقت المناسب",description:"الوصف",date:"التاريخ",number:"رقم الطلب"}
+};
+  const aciklamaOrnekleri = {
+    TR: {
+      placeholder: "Arızayı kısaca açıklayın. Örn: Dolabın sağ kapağı kapanmıyor.",
+      example: "Örnek: Dolabın sağ kapağı kapanmıyor.",
+      ticket: "Arıza Bildirim Fişi",
+      success: "Arızanız başarıyla bildirildi.",
+      save: "Kaydet",
+      done: "Tamam",
+      room: "Oda",
+      type: "Arıza Türü",
+      time: "Uygun Zaman",
+      description: "Açıklama",
+      date: "Tarih",
+      number: "Arıza No"
+    },
+    EN: {
+      placeholder: "Please briefly describe the problem. Example: The right wardrobe door does not close.",
+      example: "Example: The right wardrobe door does not close.",
+      ticket: "Fault Report Receipt",
+      success: "Your fault has been reported successfully.",
+      save: "Save",
+      done: "Done",
+      room: "Room",
+      type: "Fault Type",
+      time: "Available Time",
+      description: "Description",
+      date: "Date",
+      number: "Fault No."
+    },
+    DE: {
+      placeholder: "Bitte beschreiben Sie das Problem kurz. Beispiel: Die rechte Schranktür lässt sich nicht schließen.",
+      example: "Beispiel: Die rechte Schranktür lässt sich nicht schließen.",
+      ticket: "Störungsmeldungsbeleg",
+      success: "Ihre Störungsmeldung wurde erfolgreich übermittelt.",
+      save: "Speichern",
+      done: "Fertig",
+      room: "Zimmer",
+      type: "Störungsart",
+      time: "Verfügbare Zeit",
+      description: "Beschreibung",
+      date: "Datum",
+      number: "Störungs-Nr."
+    }
+  };
+
+  window.aciklamaDiliniGuncelle = function(lang){
+    lang = (lang || window.currentLang || "TR").toUpperCase();
+    const t = Object.assign({}, (aciklamaOrnekleri[lang] || aciklamaOrnekleri.TR), (fisDilleri[lang] || {}));
+    const input = document.getElementById("aciklama");
+    const example = document.getElementById("aciklamaOrnek");
+    if(input) input.placeholder = t.placeholder;
+    if(example) example.textContent = t.example;
+
+    const b = document.getElementById("fisKaydetText");
+    const c = document.getElementById("fisTamamText");
+    const h = document.getElementById("fisBaslik");
+    const s = document.getElementById("fisBasari");
+    if(b) b.textContent = t.save;
+    if(c) c.textContent = t.done;
+    if(h) h.textContent = t.ticket;
+    if(s) s.textContent = t.success;
+  };
+
+  window.sonFisKayit = null;
+
+  function fisDegerCevir(deger, alan, lang){
+    if(!deger) return "-";
+    try {
+      const liste = translations[lang] && translations[lang][alan];
+      if(Array.isArray(liste)){
+        const eslesen = liste.find(x => x.value === deger);
+        if(eslesen && eslesen.text) return eslesen.text;
+      }
+    } catch(e) {}
+    return deger;
+  }
+
+  window.fisGoster = function(kayit){
+    window.sonFisKayit = kayit;
+    const lang = (typeof currentLang !== "undefined" ? currentLang : "TR").toUpperCase();
+    const t = Object.assign({}, (aciklamaOrnekleri[lang] || aciklamaOrnekleri.TR), (fisDilleri[lang] || {}));
+    const tarih = kayit.tarih ? new Date(kayit.tarih).toLocaleString(
+      lang === "TR" ? "tr-TR" : lang === "DE" ? "de-DE" : "en-GB"
+    ) : "";
+
+    document.getElementById("fisDetay").innerHTML = `
+      <div style="display:grid;gap:10px;">
+        <div><b>${t.number}:</b> ${kayit.arizaNo || "-"}</div>
+        <div><b>${t.room}:</b> ${kayit.oda || "-"}</div>
+        <div><b>${t.type}:</b> ${fisDegerCevir(kayit.tur, "arizaTurleri", lang)}</div>
+        <div><b>${t.time}:</b> ${fisDegerCevir(kayit.randevu, "randevuZamanlari", lang)}</div>
+        <div><b>${t.date}:</b> ${tarih}</div>
+        <div><b>${t.description}:</b><br>${(kayit.aciklama || "-").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>
+      </div>`;
+    document.getElementById("fisModal").style.display = "block";
+    window.aciklamaDiliniGuncelle(lang);
+  };
+
+
+window.fisKaydet = function(){
+  const card = document.getElementById("fisIcerik");
+  if (!card) return;
+
+  const lang = (typeof currentLang !== "undefined" ? currentLang : "TR");
+  const kayitNo = window.sonFisKayit && window.sonFisKayit.arizaNo
+    ? window.sonFisKayit.arizaNo
+    : ("ARZ-" + Date.now());
+
+  const css = `
+    body{font-family:Arial,sans-serif;background:#f1f5f9;padding:20px}
+    .receipt{max-width:520px;margin:auto;background:#fff;border-radius:18px;padding:24px;box-shadow:0 5px 20px rgba(0,0,0,.12)}
+    .title{text-align:center}.icon{font-size:34px}.success{color:#16a34a;font-weight:700}
+  `;
+  const content = card.cloneNode(true);
+  content.querySelectorAll("button").forEach(b => b.remove());
+  content.className = "receipt";
+
+  const doc = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><title>${kayitNo}</title><style>${css}</style></head><body>${content.outerHTML}
+</body></html>`;
+  const blob = new Blob([doc], {type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = kayitNo + ".html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+
+  window.kapatFis = function(){
+    const m = document.getElementById("fisModal");
+    if(m) m.style.display = "none";
+  };
+
+  // Dil değiştiğinde mevcut uygulamanın dil fonksiyonuna bağlan.
+  document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(function(){ window.aciklamaDiliniGuncelle(window.currentLang || "TR"); }, 100);
+  });
+})();
+</script>
+
+
+</body> 
+</html>
